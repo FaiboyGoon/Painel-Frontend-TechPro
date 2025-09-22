@@ -1,0 +1,129 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body centre">
+          <form #formulario="ngForm" (ngSubmit)="save()">
+            <div class="row">
+              <div class="col-12">
+                <mdb-form-control>
+                  <input
+                    required
+                    [(ngModel)]="item.descricao"
+                    mdbInput
+                    type="text"
+                    name="descricao"
+                    class="form-control"
+                  />
+                  <label mdbLabel class="form-label" for="descricao"
+                    >Descrição do Item:</label
+                  >
+                </mdb-form-control>
+                <br />
+                <mdb-form-control>
+                  <input
+                    required
+                    [(ngModel)]="item.quantidade"
+                    mdbInput
+                    type="number"
+                    name="quantidade"
+                    class="form-control"
+                  />
+                  <label mdbLabel class="form-label" for="quantidade"
+                    >Quantidade do Item:</label
+                  >
+                </mdb-form-control>
+                <br />
+                <mdb-form-control>
+                  <input
+                    required
+                    [(ngModel)]="item.valorUnitario"
+                    mdbInput
+                    type="number"
+                    step="0.01"
+                    name="valorUnitario"
+                    class="form-control"
+                  />
+                  <label mdbLabel class="form-label" for="valorUnitario"
+                    >Valor Unitário do Item:</label
+                  >
+                </mdb-form-control>
+                <br />
+
+                <div class="col-12">
+                  <br />
+                  <div class="input-group mb-3">
+                    @if(item.transacao){
+                    <div class="border w-100 p-2 text-primary">
+                      {{ item.transacao.id }}
+                    </div>
+                    <button
+                      (click)="buscarTransacoes()"
+                      class="btn btn-secondary"
+                      type="button"
+                      mdbRipple
+                      rippleColor="danger"
+                    >
+                      Trocar Transação
+                    </button>
+                    }@else{
+                    <div class="border w-100 p-2">
+                      Nenhuma Transação selecionada!
+                    </div>
+                    <button
+                      (click)="buscarTransacoes()"
+                      class="btn btn-secondary"
+                      type="button"
+                      mdbRipple
+                      rippleColor="danger"
+                    >
+                      Buscar Transações
+                    </button>
+                    }
+                  </div>
+                </div>
+              </div>
+              <br />
+            </div>
+
+            @if(item.id > 0){
+            <button
+              type="submit"
+              [disabled]="!formulario.valid"
+              class="btn btn-success btn-rounded"
+            >
+              <i class="fas fa-save fa-sm"></i> Atualizar
+            </button>
+            }@else {
+            <button
+              type="submit"
+              [disabled]="!formulario.valid"
+              class="btn btn-success btn-rounded"
+            >
+              <i class="fas fa-save fa-sm"></i> Salvar
+            </button>
+            }
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalTransacoesList>
+  <div class="modal-header">
+    <h5 class="modal-title">Listagem de Transações</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modalRef.close()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-transacoes-list
+      [modoModal]="true"
+      (meuEvento)="meuEventoTratamento($event)"
+    ></app-transacoes-list>
+  </div>
+</ng-template>

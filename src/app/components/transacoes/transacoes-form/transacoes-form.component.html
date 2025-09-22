@@ -1,0 +1,152 @@
+<div class="container">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body centre">
+          <form #formulario="ngForm" (ngSubmit)="save()">
+            <div class="row">
+              <div class="col-12">
+                <input
+                  required
+                  [(ngModel)]="transacao.data"
+                  mdbInput
+                  id="data"
+                  type="date"
+                  name="data"
+                  class="form-control"
+                />
+                <label mdbLabel class="form-label" for="data"
+                  >Data da Transação:</label
+                >
+                <br />
+                <input
+                  required
+                  [(ngModel)]="transacao.caracteristica"
+                  mdbInput
+                  id="caracteristica"
+                  type="text"
+                  name="caracteristica"
+                  class="form-control"
+                />
+                <label mdbLabel class="form-label" for="caracteristica"
+                  >Característica da Transação</label
+                >
+                <br />
+                <input
+                  required
+                  [(ngModel)]="transacao.valorReais"
+                  mdbInput
+                  id="valorReais"
+                  type="number"
+                  name="valorReais"
+                  class="form-control"
+                />
+                <label mdbLabel class="form-label" for="valorReais"
+                  >Valor em Reais da Transação:</label
+                >
+                <br />
+                <input
+                  required
+                  [(ngModel)]="transacao.taxaCambio"
+                  mdbInput
+                  id="taxaCambio"
+                  type="number"
+                  name="taxaCambio"
+                  class="form-control"
+                />
+                <label mdbLabel class="form-label" for="taxaCambio"
+                  >Taxa do Câmbio:</label
+                >
+                <br />
+                <input
+                  required
+                  [(ngModel)]="transacao.valorDolares"
+                  mdbInput
+                  id="valorDolares"
+                  type="number"
+                  name="valorDolares"
+                  class="form-control"
+                />
+                <label mdbLabel class="form-label" for="valorDolares"
+                  >Valor em Dólares da Transação:</label
+                >
+                <br />
+                <div class="mb-3">
+                  <label class="form-label">Tipo de Transação</label>
+                  <select
+                    id="tipoTransacao"
+                    class="form-select"
+                    [(ngModel)]="transacao.tipoTransacao"
+                    name="tipoTransacao"
+                    required
+                  >
+                    <option
+                      *ngFor="let tipo of tipoTransacoes"
+                      [value]="tipo.value"
+                    >
+                      {{ tipo.label }}
+                    </option>
+                  </select>
+                </div>
+                <br />
+                <div class="mb-3">
+                  <label class="form-label">Status do Pagamento</label>
+                  <select
+                    id="statusPagamento"
+                    class="form-select"
+                    [(ngModel)]="transacao.statusPagamento"
+                    name="statusPagamento"
+                    required
+                  >
+                    <option
+                      *ngFor="let status of statusPagamentos"
+                      [value]="status.value"
+                    >
+                      {{ status.label }}
+                    </option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Tipo de Pagamento</label>
+                  <select
+                    id="tipoPagamento"
+                    class="form-select"
+                    [(ngModel)]="transacao.tipoPagamento"
+                    name="tipoPagamento"
+                    required
+                  >
+                    <option
+                      *ngFor="let tp of tipoPagamentos"
+                      [value]="tp.value"
+                    >
+                      {{ tp.label }}
+                    </option>
+                  </select>
+                </div>
+                <br />
+              </div>
+            </div>
+
+            @if(transacao.id > 0){
+            <button
+              type="submit"
+              [disabled]="!formulario.valid"
+              class="btn btn-success btn-rounded"
+            >
+              <i class="fas fa-save fa-sm"></i> Atualizar
+            </button>
+            }@else {
+            <button
+              type="submit"
+              [disabled]="!formulario.valid"
+              class="btn btn-success btn-rounded"
+            >
+              <i class="fas fa-save fa-sm"></i> Salvar
+            </button>
+            }
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

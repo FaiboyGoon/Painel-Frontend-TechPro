@@ -1,0 +1,124 @@
+<br />
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="centre">Menu de Transações</h3>
+          <div class="row">
+            <div class="col-6">
+              <div class="input-group mb-3">
+                <input
+                  [(ngModel)]="pesquisa"
+                  type="text"
+                  class="form-control"
+                  placeholder="Pesquisar Transação por ID:"
+                  aria-label="Recipient's username"
+                  aria-describedby="button-addon2"
+                />
+                <button (click)="search()">Search</button>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="direita">
+                <a
+                  (click)="new()"
+                  class="btn btn-success btn-rounded"
+                  mdbRippled
+                >
+                  <i class="fas fa-plus fa-sm"></i> Add Transação
+                </a>
+              </div>
+            </div>
+          </div>
+          <table border="1" class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Data</th>
+                <th scope="col">Característica</th>
+                @if (!modoModal) {
+                <th scope="col">Tipo Transação</th>
+                <th scope="col">Status Pagamento</th>
+                <th scope="col">Tipo Pagamento</th>
+                <th scope="col">Quantidade de Itens</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (transacao of lista; track $index) {
+              <tr>
+                <td>{{ transacao.id }}</td>
+                <td>{{ transacao.data }}</td>
+                <td>{{ transacao.caracteristica }}</td>
+                @if (!modoModal){
+                <td>{{ transacao.tipoTransacao }}</td>
+                <td>{{ transacao.statusPagamento }}</td>
+                <td>{{ transacao.tipoPagamento }}</td>
+                @if (transacao.itens) {
+                <td>{{ transacao.itens.length }}</td>
+                }@else {
+                <td>---</td>
+                }
+                <td class="direita">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-rounded"
+                    mdbRipple
+                    (click)="edit(transacao)"
+                  >
+                    <i class="fas fa-pencil fa-sm"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-rounded"
+                    mdbRipple
+                    (click)="excluirTransacao(transacao)"
+                  >
+                    <i class="fas fa-trash fa-sm"></i>
+                  </button>
+                </td>
+                }@else {
+                <td class="direita">
+                  <button
+                    (click)="selecionar(transacao)"
+                    class="btn btn-success btn-rounded"
+                    mdbRippled
+                  >
+                    Selecionar
+                  </button>
+                </td>
+                }
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalTransacaoForm>
+  <div class="modal-header">
+    @if (transacaoEdit.id > 0) {
+    <h5 class="modal-title" id="exampleModalLabel">Editando Transação</h5>
+    }@else {
+    <h5 class="modal-title" id="exampleModalLabel">
+      Cadastrando nova Transação
+    </h5>
+    }
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modalRef.close()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-transacoes-form
+      [transacao]="transacaoEdit"
+      (meuEvento)="meuEventoTratamento($event)"
+    ></app-transacoes-form>
+  </div>
+</ng-template>

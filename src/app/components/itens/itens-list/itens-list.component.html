@@ -1,0 +1,116 @@
+<br />
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="centre">Itens Disponíveis</h3>
+          <div class="row">
+            <div class="col-6">
+              <div class="input-group mb-3">
+                <input
+                  [(ngModel)]="pesquisa"
+                  type="text"
+                  class="form-control"
+                  placeholder="Pesquisar Item:"
+                  aria-label="Recipient's username"
+                  aria-describedby="button-addon2"
+                />
+                <select [(ngModel)]="tipoPesquisa">
+                  <option value="id">Por Id</option>
+                  <option value="descricao">Por Descrição</option>
+                </select>
+                <button (click)="search()">Search</button>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="direita">
+                <a
+                  (click)="new()"
+                  class="btn btn-success btn-rounded"
+                  mdbRippled
+                >
+                  <i class="fas fa-plus fa-sm"></i> Add Item
+                </a>
+              </div>
+            </div>
+          </div>
+          <table border="1" class="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Descrição</th>
+                <th scope="col">Valor/Un</th>
+                <th scope="col">Quantidade</th>
+                <th scope="col">ID Transação</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of lista; track $index) {
+              <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.descricao }}</td>
+                <td>{{ item.valorUnitario }}</td>
+                @if (!modoModal){
+                <td>{{ item.quantidade }}</td>
+                <td>{{ item.transacao.id }}</td>
+                <td class="direita">
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-rounded"
+                    mdbRipple
+                    (click)="edit(item)"
+                  >
+                    <i class="fas fa-pencil fa-sm"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-danger btn-rounded"
+                    mdbRipple
+                    (click)="excluirItem(item)"
+                  >
+                    <i class="fas fa-trash fa-sm"></i>
+                  </button>
+                </td>
+                }@else {
+                <td class="direita">
+                  <button
+                    (click)="selecionar(item)"
+                    class="btn btn-success btn-rounded"
+                    mdbRippled
+                  >
+                    Selecionar
+                  </button>
+                </td>
+                }
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalItemForm>
+  <div class="modal-header">
+    @if (itemEdit.id > 0) {
+    <h5 class="modal-title" id="exampleModalLabel">Editando item</h5>
+    }@else {
+    <h5 class="modal-title" id="exampleModalLabel">Cadastrando novo item</h5>
+    }
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modalRef.close()"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-itens-form
+      [item]="itemEdit"
+      (meuEvento)="meuEventoTratamento($event)"
+    ></app-itens-form>
+  </div>
+</ng-template>
