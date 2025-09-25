@@ -1,1 +1,142 @@
-<p>dashboard works!</p>
+<div class="container mt-4">
+  <h2 class="mb-4 text-center">Dashboard Financeiro</h2>
+
+  <div class="row mb-4 align-items-end">
+    <div class="col-md-3">
+      <mdb-form-control>
+        <input
+          mdbInput
+          type="number"
+          [(ngModel)]="anoAtual"
+          class="form-control"
+          id="anoInput"
+          placeholder="Exemplo: '2025'"
+        />
+        <label mdbLabel class="form-label" for="anoInput">Ano</label>
+      </mdb-form-control>
+    </div>
+
+    <div class="col-md-3">
+      <mdb-form-control>
+        <input
+          mdbInput
+          type="number"
+          [(ngModel)]="mesAtual"
+          class="form-control"
+          id="mesInput"
+          placeholder="(1-12)"
+        />
+        <label mdbLabel class="form-label" for="mesInput">Mês</label>
+      </mdb-form-control>
+    </div>
+
+    <div class="col-md-6 d-flex gap-2">
+      <button
+        type="button"
+        class="btn btn-primary"
+        mdbRipple
+        (click)="carregarDashboardMes(anoAtual, mesAtual)"
+      >
+        Consultar Mês
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        mdbRipple
+        (click)="carregarDashboardAno(anoAtual)"
+      >
+        Consultar Ano
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        mdbRipple
+        (click)="carregarDashboardAtual()"
+      >
+        Atual
+      </button>
+    </div>
+  </div>
+
+  <div
+    *ngIf="
+      dashboardData &&
+      (dashboardData.totalCreditosMes || dashboardData.totalCreditosAno)
+    "
+  >
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Totais do Dashboard</h5>
+        <ul class="list-group list-group-flush">
+          <li
+            class="list-group-item"
+            *ngIf="dashboardData.totalPagamentosMes !== undefined"
+          >
+            Pagamentos no mês:
+            <strong>{{ dashboardData.totalPagamentosMes }}</strong>
+          </li>
+          <li
+            class="list-group-item"
+            *ngIf="dashboardData.totalDebitosPrazoMes !== undefined"
+          >
+            Débitos a prazo no mês:
+            <strong>{{ dashboardData.totalDebitosPrazoMes }}</strong>
+          </li>
+          <li
+            class="list-group-item"
+            *ngIf="dashboardData.totalCreditosMes !== undefined"
+          >
+            Créditos no mês:
+            <strong>{{ dashboardData.totalCreditosMes }}</strong>
+          </li>
+          <li
+            class="list-group-item"
+            *ngIf="dashboardData.totalDebitosMes !== undefined"
+          >
+            Débitos no mês:
+            <strong>{{ dashboardData.totalDebitosMes }}</strong>
+          </li>
+          <li
+            class="list-group-item"
+            *ngIf="dashboardData.saldoMes !== undefined"
+          >
+            Saldo do mês: <strong>{{ dashboardData.saldoMes }}</strong>
+          </li>
+          <li
+            class="list-group-item"
+            *ngIf="dashboardData.totalCreditosAno !== undefined"
+          >
+            Créditos no ano:
+            <strong>{{ dashboardData.totalCreditosAno }}</strong>
+          </li>
+          <li
+            class="list-group-item"
+            *ngIf="dashboardData.totalDebitosAno !== undefined"
+          >
+            Débitos no ano:
+            <strong>{{ dashboardData.totalDebitosAno }}</strong>
+          </li>
+          <li
+            class="list-group-item"
+            *ngIf="dashboardData.saldoAno !== undefined"
+          >
+            Saldo do ano: <strong>{{ dashboardData.saldoAno }}</strong>
+          </li>
+          <li
+            class="list-group-item"
+            *ngIf="dashboardData.saldoAcumulado !== undefined"
+          >
+            Saldo acumulado:
+            <strong>{{ dashboardData.saldoAcumulado }}</strong>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!dashboardData || getKeys(dashboardData).length === 0">
+    <p class="text-muted text-center">
+      Nenhum dado disponível. Escolha um filtro acima.
+    </p>
+  </div>
+</div>
