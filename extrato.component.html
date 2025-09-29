@@ -1,0 +1,33 @@
+<div class="extrato-card">
+  <h2>Extrato</h2>
+
+  <div class="filters" [formGroup]="form">
+    <label>De: <input type="date" formControlName="from" /></label>
+    <label>Até: <input type="date" formControlName="to" /></label>
+    <label>Tipo:
+      <select formControlName="type">
+        <option value="all">Todos</option>
+        <option value="credit">Crédito</option>
+        <option value="debit">Débito</option>
+      </select>
+    </label>
+    <button (click)="load()">Atualizar</button>
+  </div>
+
+  <div *ngIf="loading">Carregando transações...</div>
+
+  <table *ngIf="!loading && filtered?.length" class="tx-table">
+    <thead><tr><th>Data</th><th>Descrição</th><th>Tipo</th><th>Valor</th><th>Saldo</th></tr></thead>
+    <tbody>
+      <tr *ngFor="let t of filtered">
+        <td>{{t.date | date:'shortDate'}}</td>
+        <td>{{t.description}}</td>
+        <td>{{t.type}}</td>
+        <td [class.negative]="t.amount<0">{{t.amount | currency:'BRL':'symbol':'1.2-2'}}</td>
+        <td>{{t.balance | currency:'BRL':'symbol':'1.2-2'}}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && (!filtered || filtered.length===0)">Nenhuma transação encontrada.</div>
+</div>
