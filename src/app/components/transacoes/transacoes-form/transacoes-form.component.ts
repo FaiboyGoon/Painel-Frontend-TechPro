@@ -81,6 +81,8 @@ export class TransacoesFormComponent {
           },
           error: (e) => {
             Swal.fire('Erro', e.error, 'error');
+            this.roteador.navigate(['principal/transacoes']);
+            this.meuEvento.emit('OK');
           },
         });
     }
@@ -98,6 +100,8 @@ export class TransacoesFormComponent {
         },
         error: (e) => {
           Swal.fire('Erro', e.error, 'error');
+          this.roteador.navigate(['principal/transacoes']);
+          this.meuEvento.emit('OK');
         },
       });
     }

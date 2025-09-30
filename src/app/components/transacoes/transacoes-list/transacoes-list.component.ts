@@ -66,7 +66,7 @@ export class TransacoesListComponent {
       this.transacaoService.excluirTransacao(transacao.id).subscribe({
         next: () => {
           Swal.fire({
-            title: 'Transação Criada com Sucesso!',
+            title: 'Transação Deletada com Sucesso!',
             icon: 'success',
             confirmButtonText: 'Ok',
           });

@@ -4,6 +4,6 @@ export class Cambiohistorico {
 
     id!: number;
     data!: Date;
-    taxaUsdBrl!: Big;
+    taxaUsdBrl!: number;
     dataCriacao!: Date;
 }

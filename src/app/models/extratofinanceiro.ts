@@ -1,12 +1,10 @@
-import Big from "big.js";
-
 export class Extratofinanceiro {
-    id!: number;
-    data!: Date;
-    totalCreditosDolares!: Big;
-    totalDebitosDolares!: Big;
-    saldoDiaDolares!: Big;
-    saldoAcumuladoDolares!: Big;
-    dataCriacao!: Date;
-    dataAtualizacao!: Date;
+  id!: number;
+  data!: Date;
+  totalCreditosDolares!: number;
+  totalDebitosDolares!: number;
+  saldoDiaDolares!: number;
+  saldoAcumuladoDolares!: number;
+  dataCriacao!: Date;
+  dataAtualizacao!: Date;
 }
