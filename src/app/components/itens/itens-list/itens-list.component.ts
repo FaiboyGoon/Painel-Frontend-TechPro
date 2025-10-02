@@ -42,6 +42,21 @@ export class ItensListComponent {
 
   itemService = inject(ItemnotaService);
 
+  constructor() {
+    this.buscarTodosItens();
+  }
+
+  buscarTodosItens() {
+    this.itemService.buscarTodosItens().subscribe({
+      next: (listaRetornada) => {
+        this.lista = listaRetornada;
+      },
+      error: (e) => {
+        Swal.fire('Erro', e.error, 'error');
+      },
+    });
+  }
+
   search() {
     switch (this.tipoPesquisa) {
       case 'id':
@@ -77,28 +92,27 @@ export class ItensListComponent {
     this.modalRef = this.modalService.open(this.modalItemForm);
   }
 
-  edit(item: Itemnota){
+  edit(item: Itemnota) {
     this.itemEdit = item;
     this.modalRef = this.modalService.open(this.modalItemForm);
   }
 
-  meuEventoTratamento(mensagem: any){
+  meuEventoTratamento(mensagem: any) {
     this.modalRef.close();
   }
 
-  selecionar(item: Itemnota){
+  selecionar(item: Itemnota) {
     this.meuEvento.emit(item);
   }
 
-  excluirItem(item: Itemnota){
-
+  excluirItem(item: Itemnota) {
     Swal.fire({
       title: 'Deseja mesmo deletar este item?',
       showCancelButton: true,
       confirmButtonText: 'Sim',
       cancelButtonText: 'Cancelar',
     }).then((result) => {
-      if (result.isConfirmed){
+      if (result.isConfirmed) {
         this.itemService.excluirItem(item.id).subscribe({
           next: () => {
             Swal.fire({
@@ -106,6 +120,7 @@ export class ItensListComponent {
               icon: 'success',
               confirmButtonText: 'OK',
             });
+            this.buscarTodosItens();
           },
           error: () => {
             Swal.fire({
@@ -113,10 +128,10 @@ export class ItensListComponent {
               title: 'Erro ao Excluir Item',
               confirmButtonText: 'OK',
             });
+            this.buscarTodosItens();
           },
         });
       }
     });
-    }
-
   }
+}

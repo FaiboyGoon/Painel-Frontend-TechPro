@@ -13,6 +13,10 @@ export class ItemnotaService {
 
   constructor() {}
 
+  buscarTodosItens(): Observable<Itemnota[]> {
+      return this.http.get<Itemnota[]>(this.API);
+    }
+
   buscarItensPorTransacao(transacaoId: number): Observable<Itemnota[]> {
     return this.http.get<Itemnota[]>(`${this.API}/transacao/${transacaoId}`);
   }
