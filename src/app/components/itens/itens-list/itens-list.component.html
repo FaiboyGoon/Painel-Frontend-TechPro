@@ -47,9 +47,11 @@
               <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Descrição</th>
+                @if (!modoModal) {
                 <th scope="col">Valor/Un</th>
                 <th scope="col">Quantidade</th>
                 <th scope="col">ID Transação</th>
+                }
               </tr>
             </thead>
             <tbody>
@@ -60,7 +62,11 @@
                 <td>{{ item.valorUnitario }}</td>
                 @if (!modoModal){
                 <td>{{ item.quantidade }}</td>
+                @if (item.transacao) {
                 <td>{{ item.transacao.id }}</td>
+                }@else {
+                <td>---</td>
+                }
                 <td class="direita">
                   <button
                     type="button"

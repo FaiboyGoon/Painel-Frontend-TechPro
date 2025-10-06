@@ -34,7 +34,6 @@ export class ItensListComponent {
   itemEdit!: Itemnota;
   pesquisa: string = '';
   tipoPesquisa: 'id' | 'descricao' = 'descricao';
-  resultados: any[] = [];
 
   modalService = inject(MdbModalService);
   @ViewChild('modalItemForm') modalItemForm!: TemplateRef<any>;
