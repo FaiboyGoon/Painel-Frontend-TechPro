@@ -59,9 +59,27 @@
                 <td>{{ transacao.data }}</td>
                 <td>{{ transacao.caracteristica.toUpperCase() }}</td>
                 @if (!modoModal){
-                <td>{{ transacao.tipoTransacao }}</td>
-                <td>{{ transacao.statusPagamento }}</td>
-                <td>{{ transacao.tipoPagamento }}</td>
+                <td>
+                  {{
+                    tipoTransacaoDescricao[
+                      transacao.tipoTransacao
+                    ].toUpperCase()
+                  }}
+                </td>
+                <td>
+                  {{
+                    statusPagamentoDescricao[
+                      transacao.statusPagamento
+                    ].toUpperCase()
+                  }}
+                </td>
+                <td>
+                  {{
+                    tipoPagamentoDescricao[
+                      transacao.tipoPagamento
+                    ].toUpperCase()
+                  }}
+                </td>
                 @if (transacao.itens) {
                 <td>{{ transacao.itens.length }}</td>
                 }@else {

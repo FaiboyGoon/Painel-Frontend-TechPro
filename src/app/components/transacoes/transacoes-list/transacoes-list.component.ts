@@ -17,11 +17,16 @@ import {
 import { FormsModule } from '@angular/forms';
 import { TransacoesFormComponent } from '../transacoes-form/transacoes-form.component';
 import Swal from 'sweetalert2';
+import {
+  StatusPagamentoDescricao,
+  TipoPagamentoDescricao,
+  TipoTransacaoDescricao,
+} from '../../../models/enum';
 
 @Component({
   selector: 'app-transacoes-list',
   standalone: true,
-  imports: [MdbModalModule, FormsModule, TransacoesFormComponent],
+  imports: [MdbModalModule, FormsModule],
   templateUrl: './transacoes-list.component.html',
   styleUrl: './transacoes-list.component.scss',
 })
@@ -29,6 +34,10 @@ export class TransacoesListComponent {
   lista: Transacao[] = [];
   pesquisa: string = '';
   resultados: any[] = [];
+
+  statusPagamentoDescricao = StatusPagamentoDescricao;
+  tipoPagamentoDescricao = TipoPagamentoDescricao;
+  tipoTransacaoDescricao = TipoTransacaoDescricao;
 
   @Input('modoModal') modoModal: boolean = false;
   @Output('meuEvento') meuEvento = new EventEmitter();

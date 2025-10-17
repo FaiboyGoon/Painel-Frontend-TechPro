@@ -7,8 +7,8 @@ export enum StatusPagamento {
 }
 
 export enum TipoPagamento {
-  A_VISTA = "A VISTA",
-  A_PRAZO = "A PRAZO",
+  A_VISTA = "A_VISTA",
+  A_PRAZO = "A_PRAZO",
   PARCELADO = "PARCELADO"
 }
 
