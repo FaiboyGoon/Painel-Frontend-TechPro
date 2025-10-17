@@ -38,8 +38,7 @@ export class TransacoesListComponent {
   transacaoEdit!: Transacao;
 
   modalService = inject(MdbModalService);
-  @ViewChild('modalTransacaoForm') modalTransacaoForm!: TemplateRef<any>;
-  modalRef!: MdbModalRef<any>;
+  modalRef!: MdbModalRef<TransacoesFormComponent>;
 
   constructor() {
     this.buscarTodasTransacoes();
@@ -90,17 +89,25 @@ export class TransacoesListComponent {
 
   new() {
     this.transacaoEdit = new Transacao();
-    this.modalRef = this.modalService.open(this.modalTransacaoForm);
+    this.abrirModal(this.transacaoEdit);
   }
 
   edit(transacao: Transacao) {
     this.transacaoEdit = transacao;
-    this.modalRef = this.modalService.open(this.modalTransacaoForm);
+    this.abrirModal(this.transacaoEdit);
   }
 
-  meuEventoTratamento(mensagem: any) {
-    this.buscarTodasTransacoes();
-    this.modalRef.close;
+  abrirModal(transacao: Transacao) {
+    this.modalRef = this.modalService.open(TransacoesFormComponent, {
+      modalClass: 'custom-wide-modal',
+      data: { transacao },
+    });
+
+    this.modalRef.onClose.subscribe((result) => {
+      if (result === 'saved') {
+        this.buscarTodasTransacoes();
+      }
+    });
   }
 
   selecionar(transacao: Transacao) {

@@ -11,11 +11,12 @@ import {
 import { MdbFormsModule } from 'mdb-angular-ui-kit/forms';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
+import { MdbModalModule, MdbModalRef, MdbModalService } from 'mdb-angular-ui-kit/modal';
 
 @Component({
   selector: 'app-transacoes-form',
   standalone: true,
-  imports: [FormsModule, MdbFormsModule, CommonModule, ReactiveFormsModule],
+  imports: [FormsModule, MdbFormsModule, CommonModule, ReactiveFormsModule, MdbModalModule],
   templateUrl: './transacoes-form.component.html',
   styleUrl: './transacoes-form.component.scss',
 })
@@ -27,6 +28,9 @@ export class TransacoesFormComponent {
   roteador = inject(Router);
 
   transacaoService = inject(TransacaoService);
+  modalService = inject(MdbModalService );
+
+
 
   tipoTransacoes = [
     { value: TipoTransacao.CREDITO, label: 'Crédito' },
@@ -46,7 +50,7 @@ export class TransacoesFormComponent {
     { value: TipoPagamento.PARCELADO, label: 'Parcelado' },
   ];
 
-  constructor() {
+  constructor(public modalRef: MdbModalRef<TransacoesFormComponent>) {
     let id = this.rotaActivada.snapshot.params['id'];
     if (id) {
       this.buscarTransacaoPorId(id);
@@ -105,5 +109,9 @@ export class TransacoesFormComponent {
         },
       });
     }
+  }
+
+  close(){
+    this.modalRef.close();
   }
 }

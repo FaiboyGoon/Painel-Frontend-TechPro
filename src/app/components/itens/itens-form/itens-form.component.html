@@ -7,6 +7,9 @@
             <div class="row">
               <div class="col-12">
                 <mdb-form-control>
+                  <label mdbLabel class="form-label" for="descricao"
+                    >Descrição do Item:</label
+                  >
                   <input
                     required
                     [(ngModel)]="item.descricao"
@@ -15,12 +18,12 @@
                     name="descricao"
                     class="form-control"
                   />
-                  <label mdbLabel class="form-label" for="descricao"
-                    >Descrição do Item:</label
-                  >
                 </mdb-form-control>
                 <br />
                 <mdb-form-control>
+                  <label mdbLabel class="form-label" for="quantidade"
+                    >Quantidade do Item:</label
+                  >
                   <input
                     required
                     [(ngModel)]="item.quantidade"
@@ -29,12 +32,12 @@
                     name="quantidade"
                     class="form-control"
                   />
-                  <label mdbLabel class="form-label" for="quantidade"
-                    >Quantidade do Item:</label
-                  >
                 </mdb-form-control>
                 <br />
                 <mdb-form-control>
+                  <label mdbLabel class="form-label" for="valorUnitario"
+                    >Valor Unitário do Item:</label
+                  >
                   <input
                     required
                     [(ngModel)]="item.valorUnitario"
@@ -44,9 +47,6 @@
                     name="valorUnitario"
                     class="form-control"
                   />
-                  <label mdbLabel class="form-label" for="valorUnitario"
-                    >Valor Unitário do Item:</label
-                  >
                 </mdb-form-control>
                 <br />
 

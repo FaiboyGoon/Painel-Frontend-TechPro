@@ -30,9 +30,9 @@ body {
   background-color: #dddddd;
 }
 
-.navbar{
-    background-color: darkslateblue;
+.custom-wide-modal {
+  max-width: 50vw !important;
+  width: 50vw !important;
 }
-
 /* Importing Bootstrap SCSS file. */
 @import "bootstrap/scss/bootstrap";

@@ -48,7 +48,7 @@
       <div class="card bg-success text-white">
         <div class="card-body">
           <h5>Total Créditos</h5>
-          <p>{{ resumoMensal.totalCreditos | currency : "USD" }}</p>
+          <p>{{ resumoMensal.totalCreditos | currency : "BRL" }}</p>
         </div>
       </div>
     </div>
@@ -56,7 +56,7 @@
       <div class="card bg-danger text-white">
         <div class="card-body">
           <h5>Total Débitos</h5>
-          <p>{{ resumoMensal.totalDebitos | currency : "USD" }}</p>
+          <p>{{ resumoMensal.totalDebitos | currency : "BRL" }}</p>
         </div>
       </div>
     </div>
@@ -64,7 +64,7 @@
       <div class="card bg-primary text-white">
         <div class="card-body">
           <h5>Saldo Mês</h5>
-          <p>{{ resumoMensal.saldoMes | currency : "USD" }}</p>
+          <p>{{ resumoMensal.saldoMes | currency : "BRL" }}</p>
         </div>
       </div>
     </div>
@@ -92,14 +92,14 @@
           <tr>
             <td>{{ extrato.data }}</td>
             <td>
-              {{ extrato.totalCreditosDolares | currency : "USD" }}
+              {{ extrato.totalCreditosDolares | currency : "BRL" }}
             </td>
             <td>
-              {{ extrato.totalDebitosDolares | currency : "USD" }}
+              {{ extrato.totalDebitosDolares | currency : "BRL" }}
             </td>
-            <td>{{ extrato.saldoDiaDolares | currency : "USD" }}</td>
+            <td>{{ extrato.saldoDiaDolares | currency : "BRL" }}</td>
             <td>
-              {{ extrato.saldoAcumuladoDolares | currency : "USD" }}
+              {{ extrato.saldoAcumuladoDolares | currency : "BRL" }}
             </td>
           </tr>
           }

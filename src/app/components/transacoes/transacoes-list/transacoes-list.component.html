@@ -57,7 +57,7 @@
               <tr>
                 <td>{{ transacao.id }}</td>
                 <td>{{ transacao.data }}</td>
-                <td>{{ transacao.caracteristica }}</td>
+                <td>{{ transacao.caracteristica.toUpperCase() }}</td>
                 @if (!modoModal){
                 <td>{{ transacao.tipoTransacao }}</td>
                 <td>{{ transacao.statusPagamento }}</td>
@@ -70,7 +70,7 @@
                 <td class="direita">
                   <button
                     type="button"
-                    class="btn btn-primary btn-rounded"
+                    class="btn btn-primary btn-rounded m-1"
                     mdbRipple
                     (click)="edit(transacao)"
                   >
@@ -105,27 +105,3 @@
     </div>
   </div>
 </div>
-
-<ng-template #modalTransacaoForm>
-  <div class="modal-header">
-    @if (transacaoEdit.id > 0) {
-    <h5 class="modal-title" id="exampleModalLabel">Editando Transação</h5>
-    }@else {
-    <h5 class="modal-title" id="exampleModalLabel">
-      Cadastrando nova Transação
-    </h5>
-    }
-    <button
-      type="button"
-      class="btn-close"
-      aria-label="Close"
-      (click)="modalRef.close()"
-    ></button>
-  </div>
-  <div class="modal-body">
-    <app-transacoes-form
-      [transacao]="transacaoEdit"
-      (meuEvento)="meuEventoTratamento($event)"
-    ></app-transacoes-form>
-  </div>
-</ng-template>
