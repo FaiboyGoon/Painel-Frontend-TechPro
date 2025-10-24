@@ -70,7 +70,7 @@
                 <td class="direita">
                   <button
                     type="button"
-                    class="btn btn-primary btn-rounded"
+                    class="btn btn-primary btn-rounded m-1"
                     mdbRipple
                     (click)="edit(item)"
                   >
@@ -105,27 +105,3 @@
     </div>
   </div>
 </div>
-
-<!--
-<ng-template #modalItemForm>
-  <div class="modal-header">
-    @if (itemEdit.id > 0) {
-    <h5 class="modal-title" id="exampleModalLabel">Editando item</h5>
-    }@else {
-    <h5 class="modal-title" id="exampleModalLabel">Cadastrando novo item</h5>
-    }
-    <button
-      type="button"
-      class="btn-close"
-      aria-label="Close"
-      (click)="modalRef.close()"
-    ></button>
-  </div>
-  <div class="modal-body">
-    <app-itens-form
-      [item]="itemEdit"
-      (meuEvento)="meuEventoTratamento($event)"
-    ></app-itens-form>
-  </div>
-</ng-template>
--->
