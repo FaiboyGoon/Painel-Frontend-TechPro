@@ -22,7 +22,7 @@ import { Title } from 'chart.js';
 @Component({
   selector: 'app-itens-list',
   standalone: true,
-  imports: [ItensFormComponent, MdbModalModule, FormsModule],
+  imports: [MdbModalModule, FormsModule],
   templateUrl: './itens-list.component.html',
   styleUrl: './itens-list.component.scss',
 })
@@ -36,7 +36,6 @@ export class ItensListComponent {
   tipoPesquisa: 'id' | 'descricao' = 'descricao';
 
   modalService = inject(MdbModalService);
-  @ViewChild('modalItemForm') modalItemForm!: TemplateRef<any>;
   modalRef!: MdbModalRef<any>;
 
   itemService = inject(ItemnotaService);
@@ -88,12 +87,12 @@ export class ItensListComponent {
 
   new() {
     this.itemEdit = new Itemnota();
-    this.modalRef = this.modalService.open(this.modalItemForm);
+    this.abrirModal(this.itemEdit);
   }
 
   edit(item: Itemnota) {
     this.itemEdit = item;
-    this.modalRef = this.modalService.open(this.modalItemForm);
+    this.abrirModal(this.itemEdit);
   }
 
   meuEventoTratamento(mensagem: any) {
@@ -133,4 +132,16 @@ export class ItensListComponent {
       }
     });
   }
+
+  abrirModal(item: Itemnota) {
+      this.modalRef = this.modalService.open(ItensFormComponent, {
+        data: { item },
+      });
+  
+      this.modalRef.onClose.subscribe((result) => {
+        if (result === 'saved') {
+          this.buscarTodosItens();
+        }
+      });
+    }
 }

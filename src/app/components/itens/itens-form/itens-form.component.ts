@@ -40,13 +40,13 @@ export class ItensFormComponent {
   rotaActivada = inject(ActivatedRoute);
   roteador = inject(Router);
 
+  childModalRef!: MdbModalRef<any>;
   @ViewChild('modalTransacoesList') modalTransacoesList!: TemplateRef<any>;
   modalService = inject(MdbModalService);
-  modalRef!: MdbModalRef<any>;
 
   itemService = inject(ItemnotaService);
 
-  constructor() {
+  constructor(public modalRef: MdbModalRef<ItensFormComponent>) {
     let id = this.rotaActivada.snapshot.params['id'];
     if (id) {
       this.buscarItemPorId(id);
@@ -111,13 +111,17 @@ export class ItensFormComponent {
   }
 
   buscarTransacoes() {
-    this.modalRef = this.modalService.open(this.modalTransacoesList, {
-      modalClass: 'moda1-x1',
+    this.childModalRef = this.modalService.open(this.modalTransacoesList, {
+      modalClass: 'custom-wide-modal',
     });
   }
 
   meuEventoTratamento(transacao: Transacao) {
     this.item.transacao = transacao;
+    this.childModalRef.close();
+  }
+
+  close(){
     this.modalRef.close();
   }
 }

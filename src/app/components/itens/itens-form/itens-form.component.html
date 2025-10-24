@@ -1,87 +1,89 @@
 <div class="container">
   <div class="row">
-    <div class="col-12">
+    <div class="col-lg-12">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          {{ item.id ? "Editando Item" : "Novo Item" }}
+        </h5>
+        <button type="button" class="btn-close" (click)="close()"></button>
+      </div>
       <div class="card">
         <div class="card-body centre">
           <form #formulario="ngForm" (ngSubmit)="save()">
-            <div class="row">
-              <div class="col-12">
-                <mdb-form-control>
-                  <label mdbLabel class="form-label" for="descricao"
-                    >Descrição do Item:</label
-                  >
-                  <input
-                    required
-                    [(ngModel)]="item.descricao"
-                    mdbInput
-                    type="text"
-                    name="descricao"
-                    class="form-control"
-                  />
-                </mdb-form-control>
-                <br />
-                <mdb-form-control>
-                  <label mdbLabel class="form-label" for="quantidade"
-                    >Quantidade do Item:</label
-                  >
-                  <input
-                    required
-                    [(ngModel)]="item.quantidade"
-                    mdbInput
-                    type="number"
-                    name="quantidade"
-                    class="form-control"
-                  />
-                </mdb-form-control>
-                <br />
-                <mdb-form-control>
-                  <label mdbLabel class="form-label" for="valorUnitario"
-                    >Valor Unitário do Item:</label
-                  >
-                  <input
-                    required
-                    [(ngModel)]="item.valorUnitario"
-                    mdbInput
-                    type="number"
-                    step="0.01"
-                    name="valorUnitario"
-                    class="form-control"
-                  />
-                </mdb-form-control>
-                <br />
+            <mdb-form-control>
+              <label mdbLabel class="form-label" for="descricao"
+                >Descrição do Item:</label
+              >
+              <input
+                required
+                [(ngModel)]="item.descricao"
+                mdbInput
+                type="text"
+                name="descricao"
+                class="form-control"
+              />
+            </mdb-form-control>
+            <br />
+            <mdb-form-control>
+              <label mdbLabel class="form-label" for="quantidade"
+                >Quantidade do Item:</label
+              >
+              <input
+                required
+                [(ngModel)]="item.quantidade"
+                mdbInput
+                type="number"
+                name="quantidade"
+                class="form-control"
+              />
+            </mdb-form-control>
+            <br />
+            <mdb-form-control>
+              <label mdbLabel class="form-label" for="valorUnitario"
+                >Valor Unitário do Item:</label
+              >
+              <input
+                required
+                [(ngModel)]="item.valorUnitario"
+                mdbInput
+                type="number"
+                step="0.01"
+                name="valorUnitario"
+                class="form-control"
+              />
+            </mdb-form-control>
+            <br />
 
-                <div class="col-12">
-                  <br />
-                  <div class="input-group mb-3">
-                    @if(item.transacao){
-                    <div class="border w-100 p-2 text-primary">
-                      {{ item.transacao.id }}
-                    </div>
-                    <button
-                      (click)="buscarTransacoes()"
-                      class="btn btn-secondary"
-                      type="button"
-                      mdbRipple
-                      rippleColor="danger"
-                    >
-                      Trocar Transação
-                    </button>
-                    }@else{
-                    <div class="border w-100 p-2">
-                      Nenhuma Transação selecionada!
-                    </div>
-                    <button
-                      (click)="buscarTransacoes()"
-                      class="btn btn-secondary"
-                      type="button"
-                      mdbRipple
-                      rippleColor="danger"
-                    >
-                      Buscar Transações
-                    </button>
-                    }
-                  </div>
+            <div class="col-12">
+              <br />
+              <div class="input-group mb-3">
+                @if(item.transacao){
+                <div class="border w-100 p-2 text-primary">
+                  {{ item.transacao.id }}
                 </div>
+                <button
+                  (click)="buscarTransacoes()"
+                  class="btn btn-secondary"
+                  type="button"
+                  mdbRipple
+                  rippleColor="danger"
+                >
+                  Trocar Transação
+                </button>
+                }@else{
+                <div class="border w-100 p-2">
+                  Nenhuma Transação selecionada!
+                </div>
+                <button
+                  (click)="buscarTransacoes()"
+                  class="btn btn-secondary"
+                  type="button"
+                  mdbRipple
+                  rippleColor="danger"
+                >
+                  Buscar Transações
+                </button>
+                }
               </div>
               <br />
             </div>
@@ -103,6 +105,13 @@
               <i class="fas fa-save fa-sm"></i> Salvar
             </button>
             }
+            <button
+              type="button"
+              class="btn btn-danger btn-rounded m-1"
+              (click)="close()"
+            >
+              <i class="fa-solid fa-xmark"></i> Cancelar
+            </button>
           </form>
         </div>
       </div>
@@ -117,7 +126,7 @@
       type="button"
       class="btn-close"
       aria-label="Close"
-      (click)="modalRef.close()"
+      (click)="childModalRef.close()"
     ></button>
   </div>
   <div class="modal-body">
