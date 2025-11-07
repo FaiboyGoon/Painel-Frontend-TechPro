@@ -59,80 +59,99 @@
   </div>
 
   <div
-    *ngIf="
-      dashboardData &&
-      (dashboardData.totalCreditosMes || dashboardData.totalCreditosAno)
-    "
-  >
-    <div class="card">
-      <div class="card-body">
-        <h5 class="card-title mb-3">Totais do Dashboard</h5>
-        <ul class="list-group list-group-flush">
-          <li
-            class="list-group-item"
-            *ngIf="dashboardData.totalPagamentosMes !== undefined"
+  *ngIf="
+    dashboardData &&
+    (dashboardData.totalCreditosMes || dashboardData.totalCreditosAno)
+  "
+>
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h5 class="card-title mb-4 text-center">Resumo Financeiro</h5>
+
+      <div class="row align-items-center">
+        <!-- lista na esquerda-->
+        <div class="col-lg-6 col-md-6 mb-4 mb-md-0">
+          <ul class="list-group list-group-flush">
+            <li
+              class="list-group-item d-flex justify-content-between"
+              *ngIf="dashboardData.totalPagamentosMes !== undefined"
+            >
+              <span>Pagamentos no mês:</span>
+              <strong>{{ dashboardData.totalPagamentosMes }}</strong>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between"
+              *ngIf="dashboardData.totalDebitosPrazoMes !== undefined"
+            >
+              <span>Débitos a prazo no mês:</span>
+              <strong>{{ dashboardData.totalDebitosPrazoMes }}</strong>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between"
+              *ngIf="dashboardData.totalCreditosMes !== undefined"
+            >
+              <span>Créditos no mês:</span>
+              <strong>{{ dashboardData.totalCreditosMes }}</strong>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between"
+              *ngIf="dashboardData.totalDebitosMes !== undefined"
+            >
+              <span>Débitos no mês:</span>
+              <strong>{{ dashboardData.totalDebitosMes }}</strong>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between"
+              *ngIf="dashboardData.saldoMes !== undefined"
+            >
+              <span>Saldo do mês:</span>
+              <strong>{{ dashboardData.saldoMes }}</strong>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between"
+              *ngIf="dashboardData.totalCreditosAno !== undefined"
+            >
+              <span>Créditos no ano:</span>
+              <strong>{{ dashboardData.totalCreditosAno }}</strong>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between"
+              *ngIf="dashboardData.totalDebitosAno !== undefined"
+            >
+              <span>Débitos no ano:</span>
+              <strong>{{ dashboardData.totalDebitosAno }}</strong>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between"
+              *ngIf="dashboardData.saldoAno !== undefined"
+            >
+              <span>Saldo do ano:</span>
+              <strong>{{ dashboardData.saldoAno }}</strong>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between"
+              *ngIf="dashboardData.saldoAcumulado !== undefined"
+            >
+              <span>Saldo acumulado:</span>
+              <strong>{{ dashboardData.saldoAcumulado }}</strong>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Gráfico pra direita -->
+        <div class="col-lg-6 col-md-6 text-center">
+          <div
+            class="chart-container mx-auto"
+            style="max-width: 300px; height: 300px;"
           >
-            Pagamentos no mês:
-            <strong>{{ dashboardData.totalPagamentosMes }}</strong>
-          </li>
-          <li
-            class="list-group-item"
-            *ngIf="dashboardData.totalDebitosPrazoMes !== undefined"
-          >
-            Débitos a prazo no mês:
-            <strong>{{ dashboardData.totalDebitosPrazoMes }}</strong>
-          </li>
-          <li
-            class="list-group-item"
-            *ngIf="dashboardData.totalCreditosMes !== undefined"
-          >
-            Créditos no mês:
-            <strong>{{ dashboardData.totalCreditosMes }}</strong>
-          </li>
-          <li
-            class="list-group-item"
-            *ngIf="dashboardData.totalDebitosMes !== undefined"
-          >
-            Débitos no mês:
-            <strong>{{ dashboardData.totalDebitosMes }}</strong>
-          </li>
-          <li
-            class="list-group-item"
-            *ngIf="dashboardData.saldoMes !== undefined"
-          >
-            Saldo do mês: <strong>{{ dashboardData.saldoMes }}</strong>
-          </li>
-          <li
-            class="list-group-item"
-            *ngIf="dashboardData.totalCreditosAno !== undefined"
-          >
-            Créditos no ano:
-            <strong>{{ dashboardData.totalCreditosAno }}</strong>
-          </li>
-          <li
-            class="list-group-item"
-            *ngIf="dashboardData.totalDebitosAno !== undefined"
-          >
-            Débitos no ano:
-            <strong>{{ dashboardData.totalDebitosAno }}</strong>
-          </li>
-          <li
-            class="list-group-item"
-            *ngIf="dashboardData.saldoAno !== undefined"
-          >
-            Saldo do ano: <strong>{{ dashboardData.saldoAno }}</strong>
-          </li>
-          <li
-            class="list-group-item"
-            *ngIf="dashboardData.saldoAcumulado !== undefined"
-          >
-            Saldo acumulado:
-            <strong>{{ dashboardData.saldoAcumulado }}</strong>
-          </li>
-        </ul>
+            <canvas id="dashboardChart"></canvas>
+          </div>
+        </div>
       </div>
     </div>
   </div>
+</div>
+
 
   <div *ngIf="!dashboardData || getKeys(dashboardData).length === 0">
     <p class="text-muted text-center">

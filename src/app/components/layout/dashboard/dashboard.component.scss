@@ -1,0 +1,29 @@
+.card {
+  border-radius: 1rem;
+}
+
+.card-title {
+  font-weight: 600;
+}
+
+.list-group-item {
+  font-size: 0.95rem;
+  border: none;
+  border-bottom: 1px solid #eee;
+}
+
+.list-group-item:last-child {
+  border-bottom: none;
+}
+
+.chart-container {
+  position: relative;
+  margin-top: 1rem;
+}
+
+@media (max-width: 767px) {
+  .chart-container {
+    max-width: 250px;
+    height: 250px;
+  }
+}
