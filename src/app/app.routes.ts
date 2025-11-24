@@ -8,9 +8,13 @@ import { TransacoesFormComponent } from './components/transacoes/transacoes-form
 import { CambiosListComponent } from './components/cambios/cambios-list/cambios-list.component';
 import { CambiosFormComponent } from './components/cambios/cambios-form/cambios-form.component';
 import { ExtratosListComponent } from './components/extratos/extratos-list/extratos-list.component';
+import { UsuariosFormComponent } from './components/usuarios/usuarios-form/usuarios-form.component';
+import { LoginComponent } from './components/layout/login/login.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'principal/dashboard', pathMatch: 'full' },
+  { path:'login', component: LoginComponent},
+  { path: 'cadastro', component: UsuariosFormComponent},
   {
     path: 'principal',
     component: PrincipalComponent,

@@ -1,0 +1,100 @@
+<br />
+<div class="container">
+  <div class="row">
+    <div class="col-4"></div>
+
+    <div class="col-4">
+      <div class="card">
+        <div class="card-body centre">
+          <h3>Cadastro de usuario</h3>
+          <br />
+
+          <form #formulario="ngForm" (ngSubmit)="save()">
+            <mdb-form-control>
+              <input
+                mdbInput
+                required
+                type="text"
+                name="nome-usuario"
+                class="form-control"
+                [(ngModel)]="usuario.nome"
+              />
+              <label mdbLabel class="form-label" for="nome-usuario"
+                >Nome:</label
+              >
+            </mdb-form-control>
+
+            <br />
+            <mdb-form-control>
+              <input
+                mdbInput
+                required
+                type="email"
+                name="email"
+                class="form-control"
+                [(ngModel)]="usuario.email"
+              />
+              <label mdbLabel class="form-label" for="email">Email:</label>
+              <!-- <small class="text-danger" *ngIf="backendErrors['email']">{{
+                backendErrors["email"]
+              }}</small>
+            -->
+            </mdb-form-control>
+
+            <br />
+            <mdb-form-control>
+              <input
+                mdbInput
+                required
+                type="password"
+                name="senha"
+                class="form-control"
+                [(ngModel)]="senha"
+              />
+              <label mdbLabel class="form-label" for="senha">Senha:</label>
+            </mdb-form-control>
+
+            <br />
+              <label mdbLabel class="form-label" for="tiposUsuario"
+                >Tipo de Usuário</label
+              >
+              <select
+                id="tipoUsuario"
+                class="form-select"
+                name="tipoUsuario"
+                [(ngModel)]="usuario.tipoUsuario"
+                required
+              >
+                <option *ngFor="let tipo of tipoUsuarioList" [value]="tipo.value">
+                  {{ tipo.label }}
+                </option>
+              </select>
+
+            <br />
+            <div class="row mb-4">
+              <div class="col d-flex justify-content-center">
+                <div>
+                  <button
+                    type="submit"
+                    [disabled]="!formulario.valid"
+                    class="btn btn-success btn-rounded"
+                  >
+                    <i class="fas fa-save fa-sm"></i> Salvar
+                  </button>
+                </div>
+              </div>
+
+              <div class="col">
+                <a class="btn btn-primary btn-rounded" href="/login">
+                  <i class="fa-solid fa-rotate-left"></i> Voltar ao Login
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-4"></div>
+  </div>
+</div>

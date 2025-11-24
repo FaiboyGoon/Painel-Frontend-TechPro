@@ -17,6 +17,11 @@ export enum TipoTransacao {
   DEBITO = "DEBITO"
 }
 
+export enum TipoUsuario {
+  DEMANDANTE = "DEMANDANTE",
+  USUARIO = "USUARIO"
+}
+
 // Descrições para uso nos components
 export const StatusPagamentoDescricao: Record<StatusPagamento, string> = {
   [StatusPagamento.PENDENTE]: "Pendente",
@@ -34,5 +39,10 @@ export const TipoPagamentoDescricao: Record<TipoPagamento, string> = {
 export const TipoTransacaoDescricao: Record<TipoTransacao, string> = {
   [TipoTransacao.CREDITO]: "Crédito",
   [TipoTransacao.DEBITO]: "Débito"
+};
+
+export const TipoUsuarioDescricao: Record<TipoUsuario, string> = {
+  [TipoUsuario.DEMANDANTE]: "Demandante",
+  [TipoUsuario.USUARIO]: "Usuário"
 };
 
