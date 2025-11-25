@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { UsuarioService } from '../../../services/usuario.service';
@@ -19,6 +19,10 @@ export class UsuariosFormComponent {
   usuario: Usuario = new Usuario();
   senha: string = '';
 
+  get isPagCadastro(): boolean {
+    return this.router.url.includes('new');
+  }
+
   tipoUsuarioList = [
     { value: TipoUsuario.DEMANDANTE, label: 'Demandante' },
     { value: TipoUsuario.USUARIO, label: 'Usuário' },
@@ -28,7 +32,7 @@ export class UsuariosFormComponent {
   roteador = inject(Router);
   usuarioService = inject(UsuarioService);
 
-  constructor() {}
+  constructor(private router: Router) {}
 
   save() {
     if (this.senha.length < 5) {

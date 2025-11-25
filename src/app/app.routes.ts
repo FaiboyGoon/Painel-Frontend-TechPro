@@ -12,9 +12,9 @@ import { UsuariosFormComponent } from './components/usuarios/usuarios-form/usuar
 import { LoginComponent } from './components/layout/login/login.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'principal/dashboard', pathMatch: 'full' },
-  { path:'login', component: LoginComponent},
-  { path: 'cadastro', component: UsuariosFormComponent},
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'cadastro', component: UsuariosFormComponent },
   {
     path: 'principal',
     component: PrincipalComponent,
@@ -30,6 +30,7 @@ export const routes: Routes = [
       { path: 'cambios/new', component: CambiosFormComponent },
       { path: 'cambios/edit/:id', component: CambiosFormComponent },
       { path: 'extratos', component: ExtratosListComponent },
+      { path: 'usuarios/new', component: UsuariosFormComponent },
     ],
   },
 ];
