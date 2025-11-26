@@ -11,6 +11,8 @@ import { Router, RouterLink } from '@angular/router';
 import { MdbFormsModule } from 'mdb-angular-ui-kit/forms';
 import { UsuarioService } from '../../../services/usuario.service';
 import Swal from 'sweetalert2';
+import { AuthService } from '../../../auth/auth.service';
+import { Login } from '../../../auth/login';
 
 @Component({
   selector: 'app-login',
@@ -26,24 +28,31 @@ import Swal from 'sweetalert2';
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-  email!: '';
-  senha!: '';
+  login: Login = new Login();
 
   router = inject(Router);
   usuarioService = inject(UsuarioService);
+  authService = inject(AuthService);
 
-  constructor() {}
+  constructor() {
+    this.authService.removerToken();
+  }
 
   logar() {
-    this.usuarioService.login(this.email, this.senha).subscribe({
-      next: () => {
-        this.gerarToast().fire({ icon: 'success', title: 'Seja bem-vindo!' });
-        this.router.navigate(['principal/dashboard']);
+
+    this.authService.logar(this.login).subscribe({
+      next: (token) => {
+        if (token) {
+          this.authService.addToken(token);
+          this.gerarToast().fire({ icon: 'success', title: 'Seja bem-vindo!' });
+          console.log(token);
+          this.router.navigate(['/principal/dashboard']);
+        }
       },
       error: (err) => {
-        Swal.fire('Erro no Login', 'Email ou Senha Incorrectos!', 'error');
-      },
-    });
+            Swal.fire('Erro no Login', 'Email ou Senha Incorrectos!', 'error');
+        }
+      });
   }
 
   gerarToast() {

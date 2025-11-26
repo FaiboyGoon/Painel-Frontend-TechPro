@@ -17,8 +17,8 @@
                 type="email"
                 id="form2Example1"
                 class="form-control"
-                [(ngModel)]="email"
-                name="username"
+                [(ngModel)]="login.email"
+                name="email"
               />
               <label mdbLabel class="form-label" for="form2Example1"
                 >Email do Usuário</label
@@ -32,8 +32,8 @@
                 type="password"
                 id="form2Example2"
                 class="form-control"
-                [(ngModel)]="senha"
-                name="password"
+                [(ngModel)]="login.senha"
+                name="senha"
                 (keyup.enter)="logar()"
               />
               <label mdbLabel class="form-label" for="form2Example2"

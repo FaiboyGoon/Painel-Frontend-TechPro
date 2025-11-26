@@ -1,57 +1,60 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, tap } from 'rxjs';
-import { Usuario } from '../models/usuario';
+import { inject, Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { TipoUsuario } from '../models/enum';
+import { Usuario } from '../models/usuario';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { Login } from './login';
+
+export interface LoginResponse {
+  token: string;
+  id: number;
+  nome: string;
+  email: string;
+  tipoUsuario: TipoUsuario;
+  mensagem: string;
+}
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
+  http = inject(HttpClient);
+  private API = 'http://localhost:8080/api/usuarios';
 
-  private apiUrl = 'http://localhost:8080/api/usuarios';
+  logar(login: Login): Observable<string> {
+    return this.http.post<string>(`${this.API}/login`, login, {
+      responseType: 'text' as 'json',
+    });
+  }
 
-  private usuarioSubject = new BehaviorSubject<Usuario | null>(null);
-  usuario$ = this.usuarioSubject.asObservable();
+  addToken(token: string) {
+    localStorage.setItem('token', token);
+  }
 
-  constructor(private http: HttpClient) {
-    const saved = localStorage.getItem('usuario');
-    if (saved) {
-      this.usuarioSubject.next(JSON.parse(saved));
+  removerToken() {
+    localStorage.removeItem('token');
+  }
+
+  getToken() {
+    return localStorage.getItem('token');
+  }
+
+  jwtDecode() {
+    let token = this.getToken();
+    if (token) {
+      return jwtDecode<JwtPayload>(token);
     }
+    return '';
   }
 
-  login(credentials: { email: string; senha: string }) {
-    return this.http.post<Usuario>(`${this.apiUrl}/login`, credentials).pipe(
-      tap((usuario) => {
-        this.usuarioSubject.next(usuario);
-        localStorage.setItem('usuario', JSON.stringify(usuario));
-      })
-    );
+  hasRole(role: string) {
+    let user = this.jwtDecode() as Usuario;
+    if (user.tipoUsuario == role) return true;
+    else return false;
   }
 
-  logout() {
-    this.usuarioSubject.next(null);
-    localStorage.removeItem('usuario');
+  getUsuarioLogado() {
+    return this.jwtDecode() as Usuario;
   }
-
-  get usuarioLogado(): Usuario | null {
-    return this.usuarioSubject.value;
-  }
-
-  get isLogged(): boolean {
-    return !!this.usuarioSubject.value;
-  }
-
-  /** Headers required by backend */
-  getAuthHeaders() {
-    const usuario = this.usuarioLogado;
-
-    if (!usuario) return {};
-
-    return {
-      'X-Usuario-Id': usuario.id?.toString(),
-      'X-Usuario-Tipo': usuario.tipoUsuario
-    };
-  }
-} 
+}

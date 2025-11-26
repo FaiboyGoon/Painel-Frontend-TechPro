@@ -12,6 +12,9 @@ import { MdbFormsModule } from 'mdb-angular-ui-kit/forms';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { MdbModalModule, MdbModalRef, MdbModalService } from 'mdb-angular-ui-kit/modal';
+import { Taxacambio } from '../../../models/taxacambio';
+import { CambiohistoricoService } from '../../../services/cambiohistorico.service';
+
 
 @Component({
   selector: 'app-transacoes-form',
@@ -27,8 +30,10 @@ export class TransacoesFormComponent {
   rotaActivada = inject(ActivatedRoute);
   roteador = inject(Router);
 
+  cambioService = inject(CambiohistoricoService);
   transacaoService = inject(TransacaoService);
   modalService = inject(MdbModalService );
+  taxaCambio!: Taxacambio;
 
 
 
@@ -55,6 +60,7 @@ export class TransacoesFormComponent {
     if (id) {
       this.buscarTransacaoPorId(id);
     }
+    this.atualizarTaxa();
   }
 
   buscarTransacaoPorId(id: number) {
@@ -109,6 +115,22 @@ export class TransacoesFormComponent {
         },
       });
     }
+  }
+
+  atualizarTaxa(){
+    this.cambioService.atualizarTaxaDia().subscribe({
+          next: (taxa) => {
+            this.taxaCambio = taxa;
+            return this.taxaCambio;
+          },
+          error: (e) =>
+            Swal.fire({
+              title: 'Erro ao carregar a dashboard atual',
+              text: e.error,
+              icon: 'error',
+              confirmButtonText: 'Ok',
+            }),
+        });
   }
 
   close(){

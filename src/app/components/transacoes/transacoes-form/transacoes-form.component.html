@@ -50,17 +50,18 @@
             />
             <br />
             <label mdbLabel class="form-label" for="taxaCambio"
-              >Taxa do Câmbio:</label
+              >Taxa do Câmbio: 
+              {{taxaCambio}}</label
             >
-            <input
-              required
-              [(ngModel)]="transacao.taxaCambio"
-              mdbInput
-              id="taxaCambio"
-              type="number"
-              name="taxaCambio"
-              class="form-control"
-            />
+            <br>
+            <button
+                  (click)="atualizarTaxa()"
+                  class="btn btn-secondary"
+                  type="button"
+                  mdbRipple
+                >
+                <i class="fa-solid fa-rotate"></i> Atualizar
+            </button>
             <br />
             <div class="mb-3">
               <label class="form-label">Tipo de Transação</label>
