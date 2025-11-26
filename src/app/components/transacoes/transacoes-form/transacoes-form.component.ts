@@ -98,6 +98,7 @@ export class TransacoesFormComponent {
     }
     // Criando uma Nova
     else {
+      this.transacao.taxaCambio = this.taxaCambio;
       this.transacaoService.criarTransacao(this.transacao).subscribe({
         next: () => {
           Swal.fire({
