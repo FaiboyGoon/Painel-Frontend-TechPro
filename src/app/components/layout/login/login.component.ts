@@ -41,11 +41,11 @@ export class LoginComponent {
   logar() {
 
     this.authService.logar(this.login).subscribe({
-      next: (token) => {
-        if (token) {
-          this.authService.addToken(token);
+      next: (response) => {
+        if (response) {
+          this.authService.addToken(response.token);
           this.gerarToast().fire({ icon: 'success', title: 'Seja bem-vindo!' });
-          console.log(token);
+          //console.log(token);
           this.router.navigate(['/principal/dashboard']);
         }
       },

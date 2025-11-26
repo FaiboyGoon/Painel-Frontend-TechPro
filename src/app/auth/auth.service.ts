@@ -22,11 +22,10 @@ export class AuthService {
   http = inject(HttpClient);
   private API = 'http://localhost:8080/api/usuarios';
 
-  logar(login: Login): Observable<string> {
-    return this.http.post<string>(`${this.API}/login`, login, {
-      responseType: 'text' as 'json',
-    });
-  }
+  logar(login: Login): Observable<LoginResponse> {
+  return this.http.post<LoginResponse>(`${this.API}/login`, login);
+}
+
 
   addToken(token: string) {
     localStorage.setItem('token', token);
