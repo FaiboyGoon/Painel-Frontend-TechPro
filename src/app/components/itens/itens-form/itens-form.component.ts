@@ -76,6 +76,7 @@ export class ItensFormComponent {
           });
           this.roteador.navigate(['principal/itens']);
           this.meuEvento.emit('OK');
+          this.close();
         },
         error: (e) =>
           Swal.fire({
@@ -84,6 +85,7 @@ export class ItensFormComponent {
             icon: 'error',
             confirmButtonText: 'Ok',
           }),
+          
       });
     }
     //Criar um Item Novo
@@ -97,6 +99,7 @@ export class ItensFormComponent {
           });
           this.roteador.navigate(['principal/itens']);
           this.meuEvento.emit('OK');
+          this.close();
         },
         error: (e) => {
           Swal.fire({

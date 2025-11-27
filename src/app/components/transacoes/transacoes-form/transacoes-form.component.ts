@@ -88,11 +88,13 @@ export class TransacoesFormComponent {
             });
             this.roteador.navigate(['principal/transacoes']);
             this.meuEvento.emit('OK');
+            this.close();
           },
           error: (e) => {
             Swal.fire('Erro', e.error, 'error');
             this.roteador.navigate(['principal/transacoes']);
             this.meuEvento.emit('OK');
+            this.close();
           },
         });
     }
@@ -108,11 +110,13 @@ export class TransacoesFormComponent {
           });
           this.roteador.navigate(['principal/transacoes']);
           this.meuEvento.emit('OK');
+          this.close();
         },
         error: (e) => {
           Swal.fire('Erro', e.error, 'error');
           this.roteador.navigate(['principal/transacoes']);
           this.meuEvento.emit('OK');
+          this.close();
         },
       });
     }
