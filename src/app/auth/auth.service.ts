@@ -14,6 +14,14 @@ export interface LoginResponse {
   tipoUsuario: TipoUsuario;
   mensagem: string;
 }
+export interface DecodedToken {
+  role: string;
+  id: number;
+  sub: string;
+  iat: number;
+  exp: number;
+}
+
 
 @Injectable({
   providedIn: 'root',
@@ -39,21 +47,19 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  jwtDecode() {
-    let token = this.getToken();
-    if (token) {
-      return jwtDecode<JwtPayload>(token);
-    }
-    return '';
+  jwtDecode(): DecodedToken | null {
+    const token = this.getToken();
+    if (!token) return null;
+    return jwtDecode<DecodedToken>(token);
   }
 
-  hasRole(role: string) {
-    let user = this.jwtDecode() as Usuario;
-    if (user.tipoUsuario == role) return true;
-    else return false;
+  hasRole(role: string): boolean {
+    const decoded = this.jwtDecode();
+    if (!decoded) return false;
+    return decoded.role === role;
   }
 
   getUsuarioLogado() {
-    return this.jwtDecode() as Usuario;
+    return this.jwtDecode();
   }
 }

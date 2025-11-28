@@ -23,12 +23,16 @@
         <li class="nav-item">
           <a class="nav-link" href="principal/extratos">Extratos</a>
         </li>
-         <li class="nav-item">
-          <a class="nav-link" href="principal/usuarios/new">Cadastrar Usuario</a>
+        @if (authService.hasRole("DEMANDANTE")) {
+        <li class="nav-item">
+          <a class="nav-link" href="principal/usuarios/new"
+            >Cadastrar Usuario</a
+          >
         </li>
+        }
       </ul>
       <!-- Left links -->
-       <ul class="navbar-nav d-flex w-auto">
+      <ul class="navbar-nav d-flex w-auto">
         <li class="nav-item">
           <a class="nav-link" aria-current="page" href="/login">Sair</a>
         </li>
