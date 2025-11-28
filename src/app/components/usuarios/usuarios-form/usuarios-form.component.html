@@ -55,6 +55,7 @@
             </mdb-form-control>
 
             <br />
+            @if (authService.hasRole("DEMANDANTE")) {
               <label mdbLabel class="form-label" for="tiposUsuario"
                 >Tipo de Usuário</label
               >
@@ -71,6 +72,7 @@
               </select>
 
             <br />
+            }
             <div class="row mb-4">
               <div class="col d-flex justify-content-center">
                 <div>

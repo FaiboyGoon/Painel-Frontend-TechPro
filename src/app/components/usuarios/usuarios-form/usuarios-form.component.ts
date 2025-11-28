@@ -7,6 +7,7 @@ import { MdbFormsModule } from 'mdb-angular-ui-kit/forms';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { TipoUsuario, TipoUsuarioDescricao } from '../../../models/enum';
+import { AuthService } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-usuarios-form',
@@ -31,6 +32,7 @@ export class UsuariosFormComponent {
   rotaAtivida = inject(ActivatedRoute);
   roteador = inject(Router);
   usuarioService = inject(UsuarioService);
+  authService = inject(AuthService);
 
   constructor(private router: Router) {}
 
@@ -41,6 +43,9 @@ export class UsuariosFormComponent {
     }
 
     this.usuario.senha = this.senha;
+    if(!this.usuario.tipoUsuario){
+      this.usuario.tipoUsuario = TipoUsuario.USUARIO;
+    }else{
 
     //Save
     this.usuarioService.cadastrar(this.usuario).subscribe({
@@ -57,4 +62,5 @@ export class UsuariosFormComponent {
       },
     });
   }
+}
 }
