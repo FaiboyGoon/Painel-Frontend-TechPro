@@ -6,7 +6,7 @@ import { Usuario } from '../../../models/usuario';
 import { MdbFormsModule } from 'mdb-angular-ui-kit/forms';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { TipoUsuario, TipoUsuarioDescricao } from '../../../models/enum';
+import { TipoUsuario } from '../../../models/enum';
 
 @Component({
   selector: 'app-usuarios-form',
@@ -31,7 +31,6 @@ export class UsuariosFormComponent {
   rotaAtivida = inject(ActivatedRoute);
   roteador = inject(Router);
   usuarioService = inject(UsuarioService);
-  authService = inject(AuthService);
 
   constructor(private router: Router) {
     // Inicializa o tipoUsuario com um valor padrão
@@ -45,10 +44,35 @@ export class UsuariosFormComponent {
       return;
     }
 
-    this.usuario.senha = this.senha;
+    // Validação de campos obrigatórios
+    if (!this.usuario.nome || this.usuario.nome.trim() === '') {
+      Swal.fire('Nome é obrigatório!', '', 'error');
+      return;
+    }
 
-    //Save
-    this.usuarioService.cadastrar(this.usuario).subscribe({
+    if (!this.usuario.email || this.usuario.email.trim() === '') {
+      Swal.fire('Email é obrigatório!', '', 'error');
+      return;
+    }
+
+    if (!this.usuario.tipoUsuario) {
+      Swal.fire('Tipo de usuário é obrigatório!', '', 'error');
+      return;
+    }
+
+    // Prepara o objeto para enviar
+    const usuarioParaEnviar = {
+      nome: this.usuario.nome.trim(),
+      email: this.usuario.email.trim(),
+      senha: this.senha,
+      tipoUsuario: this.usuario.tipoUsuario,
+      ativo: true
+    };
+
+    console.log('Enviando usuário:', usuarioParaEnviar); // Para debug
+
+    // Save
+    this.usuarioService.cadastrar(usuarioParaEnviar as any).subscribe({
       next: (mensagem: any) => {
         Swal.fire({
           title: 'Sucesso!',
@@ -80,5 +104,4 @@ export class UsuariosFormComponent {
       },
     });
   }
-}
 }
