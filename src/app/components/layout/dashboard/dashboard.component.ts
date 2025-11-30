@@ -1,5 +1,6 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { DashboardService } from '../../../services/dashboard.service';
+import { CambiohistoricoService } from '../../../services/cambiohistorico.service';
 import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -20,19 +21,42 @@ export class DashboardComponent implements OnInit, OnDestroy {
   dashboardData: any = {};
   anoAtual: number = new Date().getFullYear();
   mesAtual: number = new Date().getMonth() + 1;
+  taxaCambioAtual: number = 5.8; 
 
   private chart: Chart<'doughnut', number[], any> | null = null;
 
   dashboardService = inject(DashboardService);
+  cambioService = inject(CambiohistoricoService);
 
   constructor() {}
 
   ngOnInit(): void {
+    this.carregarTaxaCambio();
     this.carregarDashboardAtual();
   }
 
   ngOnDestroy(): void {
     if (this.chart) this.chart.destroy();
+  }
+
+  carregarTaxaCambio() {
+    this.cambioService.atualizarTaxaDia().subscribe({
+      next: (taxa: any) => {
+        
+        if (typeof taxa === 'number') {
+          this.taxaCambioAtual = taxa;
+        } else if (taxa && taxa.cambio) {
+          this.taxaCambioAtual = taxa.cambio;
+        } else if (taxa && taxa.taxaUsdBrl) {
+          this.taxaCambioAtual = taxa.taxaUsdBrl;
+        }
+        console.log('Taxa de câmbio carregada:', this.taxaCambioAtual);
+      },
+      error: (e) => {
+        console.error('Erro ao carregar taxa de câmbio:', e);
+        
+      },
+    });
   }
 
   carregarDashboardAtual(): void {
@@ -123,44 +147,48 @@ export class DashboardComponent implements OnInit, OnDestroy {
           ],
         },
         options: {
-  responsive: true,
-  cutout: '65%',
-  plugins: {
-    legend: {
-      position: 'bottom',
-    },
-    title: {
-      display: true,
-      text: 'Gráfico Financeiro',
-      font: { size: 18 },
-    },
-    datalabels: {
-      color: '#fff',
-      font: { weight: 'bold' },
-      formatter: (value: number, context: any) => {
-        const dataArray = context.chart.data.datasets[0].data as number[];
-        const total = dataArray.reduce((a, b) => a + b, 0);
-        const percentage = total
-          ? ((value / total) * 100).toFixed(1) + '%'
-          : '0%';
-        return percentage;
-      },
-    },
-    tooltip: {
-      callbacks: {
-        label: function (context) {
-          const label = context.label || '';
-          const value = context.parsed || 0;
-          const formattedValue = value.toLocaleString('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-          });
-          return `${label}: ${formattedValue}`;
+          responsive: true,
+          cutout: '65%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+            },
+            title: {
+              display: true,
+              text: 'Gráfico Financeiro',
+              font: { size: 18 },
+            },
+            datalabels: {
+              color: '#fff',
+              font: { weight: 'bold' },
+              formatter: (value: number, context: any) => {
+                const dataArray = context.chart.data.datasets[0].data as number[];
+                const total = dataArray.reduce((a, b) => a + b, 0);
+                const percentage = total
+                  ? ((value / total) * 100).toFixed(1) + '%'
+                  : '0%';
+                return percentage;
+              },
+            },
+            tooltip: {
+              callbacks: {
+                label: (context) => {
+                  const label = context.label || '';
+                  const value = context.parsed || 0;
+                  const formattedBRL = value.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                  });
+                  const formattedUSD = (value / this.taxaCambioAtual).toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                  });
+                  return `${label}: ${formattedBRL} (${formattedUSD})`;
+                },
+              },
+            },
+          },
         },
-      },
-    },
-  },
-},
       });
     }, 0);
   }

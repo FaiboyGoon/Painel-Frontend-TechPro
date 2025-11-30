@@ -10,43 +10,81 @@
       <div class="card">
         <div class="card-body centre">
           <form #formulario="ngForm" (ngSubmit)="save()">
-              <label mdbLabel class="form-label" for="descricao"
-                >Descrição do Item:</label
-              >
-              <input
-                required
-                [(ngModel)]="item.descricao"
-                mdbInput
-                type="text"
-                name="descricao"
-                class="form-control"
-              />
+            <label mdbLabel class="form-label" for="descricao"
+              >Descrição do Item:</label
+            >
+            <input
+              required
+              [(ngModel)]="item.descricao"
+              mdbInput
+              type="text"
+              name="descricao"
+              class="form-control"
+            />
             <br />
-              <label mdbLabel class="form-label" for="quantidade"
-                >Quantidade do Item:</label
-              >
-              <input
-                required
-                [(ngModel)]="item.quantidade"
-                mdbInput
-                type="number"
-                name="quantidade"
-                class="form-control"
-              />
+
+            <label mdbLabel class="form-label" for="quantidade"
+              >Quantidade do Item:</label
+            >
+            <input
+              required
+              [(ngModel)]="item.quantidade"
+              (input)="calcularValorTotal()"
+              mdbInput
+              type="number"
+              name="quantidade"
+              class="form-control"
+            />
             <br />
-              <label mdbLabel class="form-label" for="valorUnitario"
-                >Valor Unitário do Item:</label
-              >
-              <input
-                required
-                [(ngModel)]="item.valorUnitario"
-                mdbInput
-                type="number"
-                step="0.01"
-                name="valorUnitario"
-                class="form-control"
-              />
+
+            <label mdbLabel class="form-label" for="valorUnitario"
+              >Valor Unitário do Item:</label
+            >
+            <div class="row">
+              <div class="col-md-12">
+                <input
+                  required
+                  [(ngModel)]="item.valorUnitario"
+                  (input)="calcularValorTotal()"
+                  mdbInput
+                  type="number"
+                  step="0.01"
+                  name="valorUnitario"
+                  class="form-control"
+                />
+              </div>
+            </div>
+            <div class="row mt-2">
+              <div class="col-md-6">
+                <small class="form-text text-muted">
+                  <strong>Em Reais:</strong> {{ item.valorUnitario | currency : 'BRL' }}
+                </small>
+              </div>
+              <div class="col-md-6">
+                <small class="form-text text-muted">
+                  <strong>Em Dólares:</strong> {{ (item.valorUnitario / taxaCambioAtual) | currency : 'USD' }}
+                </small>
+              </div>
+            </div>
             <br />
+
+            <!-- Valor Total Calculado -->
+            <div class="alert alert-info">
+              <div class="row">
+                <div class="col-md-12 mb-2">
+                  <strong>Valor Total (Quantidade × Valor Unitário):</strong>
+                </div>
+                <div class="col-md-6">
+                  <div class="h5 mb-0">{{ valorTotalCalculado | currency : 'BRL' }}</div>
+                  <small class="text-muted">Em Reais</small>
+                </div>
+                <div class="col-md-6">
+                  <div class="h5 mb-0">{{ (valorTotalCalculado / taxaCambioAtual) | currency : 'USD' }}</div>
+                  <small class="text-muted">Em Dólares</small>
+                </div>
+              </div>
+            </div>
+
             <div class="col-12">
               <br />
               <div class="input-group mb-3">

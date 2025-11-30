@@ -10,9 +10,7 @@
       <div class="card">
         <div class="card-body centre">
           <form #formulario="ngForm" (ngSubmit)="save()">
-            <label mdbLabel class="form-label" for="data"
-              >Data da Transação:</label
-            >
+            <label mdbLabel class="form-label" for="data">Data da Transação:</label>
             <input
               required
               [(ngModel)]="transacao.data"
@@ -23,9 +21,8 @@
               class="form-control"
             />
             <br />
-            <label mdbLabel class="form-label" for="caracteristica"
-              >Característica da Transação</label
-            >
+
+            <label mdbLabel class="form-label" for="caracteristica">Característica da Transação</label>
             <input
               required
               [(ngModel)]="transacao.caracteristica"
@@ -36,33 +33,58 @@
               class="form-control"
             />
             <br />
-            <label mdbLabel class="form-label" for="valorReais"
-              >Valor em Reais da Transação:</label
-            >
-            <input
-              required
-              [(ngModel)]="transacao.valorReais"
-              mdbInput
-              id="valorReais"
-              type="number"
-              name="valorReais"
-              class="form-control"
-            />
-            <br />
-            <label mdbLabel class="form-label" for="taxaCambio"
-              >Taxa do Câmbio: 
-              {{taxaCambio}}</label
-            >
-            <br>
-            <button
-                  (click)="atualizarTaxa()"
-                  class="btn btn-secondary"
-                  type="button"
-                  mdbRipple
+
+            <label mdbLabel class="form-label">Valor da Transação:</label>
+            <div class="row">
+              <div class="col-md-8">
+                <input
+                  required
+                  [(ngModel)]="valorEntrada"
+                  (input)="forcarAtualizacao()"
+                  mdbInput
+                  id="valorReais"
+                  type="number"
+                  name="valorReais"
+                  class="form-control"
+                  placeholder="Digite o valor"
+                />
+              </div>
+              <div class="col-md-4">
+                <select
+                  id="moedaSelecionada"
+                  class="form-select"
+                  [(ngModel)]="moedaSelecionada"
+                  (change)="forcarAtualizacao()"
+                  name="moedaSelecionada"
+                  required
                 >
-                <i class="fa-solid fa-rotate"></i> Atualizar
+                  <option *ngFor="let moeda of moedas" [value]="moeda.value">
+                    {{ moeda.label }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="row mt-2">
+              <div class="col-md-6">
+                <small class="form-text text-muted">
+                  <strong>Em Reais:</strong> R$ {{ obterValorEmReais() | number: '1.2-2' }}
+                </small>
+              </div>
+              <div class="col-md-6">
+                <small class="form-text text-muted">
+                  <strong>Em Dólares:</strong> US$ {{ obterValorEmDolares() | number: '1.2-2' }}
+                </small>
+              </div>
+            </div>
+            <br />
+
+            <label mdbLabel class="form-label" for="taxaCambio">Taxa do Câmbio: {{ taxaCambio && taxaCambio.cambio ? (taxaCambio.cambio | number: '1.2-2') : 'Carregando...' }}</label>
+            <br />
+            <button (click)="atualizarTaxa()" class="btn btn-secondary" type="button" mdbRipple>
+              <i class="fa-solid fa-rotate"></i> Atualizar
             </button>
             <br />
+
             <div class="mb-3">
               <label class="form-label">Tipo de Transação</label>
               <select
@@ -72,15 +94,13 @@
                 name="tipoTransacao"
                 required
               >
-                <option
-                  *ngFor="let tipo of tipoTransacoes"
-                  [value]="tipo.value"
-                >
+                <option *ngFor="let tipo of tipoTransacoes" [value]="tipo.value">
                   {{ tipo.label }}
                 </option>
               </select>
             </div>
             <br />
+
             <div class="mb-3">
               <label class="form-label">Status do Pagamento</label>
               <select
@@ -90,14 +110,12 @@
                 name="statusPagamento"
                 required
               >
-                <option
-                  *ngFor="let status of statusPagamentos"
-                  [value]="status.value"
-                >
+                <option *ngFor="let status of statusPagamentos" [value]="status.value">
                   {{ status.label }}
                 </option>
               </select>
             </div>
+
             <div class="mb-3">
               <label class="form-label">Tipo de Pagamento</label>
               <select
@@ -115,27 +133,16 @@
             <br />
 
             @if(transacao.id > 0){
-            <button
-              type="submit"
-              [disabled]="!formulario.valid"
-              class="btn btn-success btn-rounded"
-            >
+            <button type="submit" [disabled]="!formulario.valid" class="btn btn-success btn-rounded">
               <i class="fas fa-save fa-sm"></i> Atualizar
             </button>
             }@else {
-            <button
-              type="submit"
-              [disabled]="!formulario.valid"
-              class="btn btn-success btn-rounded"
-            >
+            <button type="submit" [disabled]="!formulario.valid" class="btn btn-success btn-rounded">
               <i class="fas fa-save fa-sm"></i> Salvar
             </button>
             }
-            <button
-              type="button"
-              class="btn btn-danger btn-rounded m-1"
-              (click)="close()"
-            >
+
+            <button type="button" class="btn btn-danger btn-rounded m-1" (click)="close()">
               <i class="fa-solid fa-xmark"></i> Cancelar
             </button>
           </form>

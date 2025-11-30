@@ -6,7 +6,7 @@ import { Usuario } from '../../../models/usuario';
 import { MdbFormsModule } from 'mdb-angular-ui-kit/forms';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { TipoUsuario, TipoUsuarioDescricao } from '../../../models/enum';
+import { TipoUsuario } from '../../../models/enum';
 
 @Component({
   selector: 'app-usuarios-form',
@@ -32,28 +32,75 @@ export class UsuariosFormComponent {
   roteador = inject(Router);
   usuarioService = inject(UsuarioService);
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+    // Inicializa o tipoUsuario com um valor padrão
+    this.usuario.tipoUsuario = TipoUsuario.USUARIO;
+  }
 
   save() {
-    if (this.senha.length < 5) {
+    // Validação de senha
+    if (!this.senha || this.senha.length < 5) {
       Swal.fire('A senha precisa ter no mínimo 5 caracteres!', '', 'error');
       return;
     }
 
-    this.usuario.senha = this.senha;
+    // Validação de campos obrigatórios
+    if (!this.usuario.nome || this.usuario.nome.trim() === '') {
+      Swal.fire('Nome é obrigatório!', '', 'error');
+      return;
+    }
 
-    //Save
-    this.usuarioService.cadastrar(this.usuario).subscribe({
+    if (!this.usuario.email || this.usuario.email.trim() === '') {
+      Swal.fire('Email é obrigatório!', '', 'error');
+      return;
+    }
+
+    if (!this.usuario.tipoUsuario) {
+      Swal.fire('Tipo de usuário é obrigatório!', '', 'error');
+      return;
+    }
+
+    // Prepara o objeto para enviar
+    const usuarioParaEnviar = {
+      nome: this.usuario.nome.trim(),
+      email: this.usuario.email.trim(),
+      senha: this.senha,
+      tipoUsuario: this.usuario.tipoUsuario,
+      ativo: true
+    };
+
+    console.log('Enviando usuário:', usuarioParaEnviar); // Para debug
+
+    // Save
+    this.usuarioService.cadastrar(usuarioParaEnviar as any).subscribe({
       next: (mensagem: any) => {
-        Swal.fire(
-          mensagem?.message || 'Usuário criado com sucesso!',
-          '',
-          'success'
-        );
+        Swal.fire({
+          title: 'Sucesso!',
+          text: mensagem?.mensagem || mensagem?.message || 'Usuário criado com sucesso!',
+          icon: 'success',
+          confirmButtonText: 'Ok'
+        });
         this.roteador.navigate(['login']);
       },
-      error: (err) => {
-        Swal.fire('Erro', err.message, 'error');
+      error: (erro) => {
+        console.error('Erro completo:', erro); // Para debug
+        
+        let mensagemErro = 'Erro ao cadastrar usuário';
+        
+        if (erro.error?.erro) {
+          mensagemErro = erro.error.erro;
+        } else if (erro.error?.message) {
+          mensagemErro = erro.error.message;
+        } else if (erro.message) {
+          mensagemErro = erro.message;
+        }
+        
+        Swal.fire({
+          title: 'Erro',
+          text: mensagemErro,
+          icon: 'error',
+          confirmButtonText: 'Ok'
+        });
       },
     });
   }

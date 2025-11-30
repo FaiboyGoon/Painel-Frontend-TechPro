@@ -23,9 +23,21 @@ export class AuthService {
   private API = 'http://localhost:8080/api/usuarios';
 
   logar(login: Login): Observable<LoginResponse> {
-  return this.http.post<LoginResponse>(`${this.API}/login`, login);
-}
-
+    return this.http.post<LoginResponse>(`${this.API}/login`, login).pipe(
+      tap((response) => {
+        // Armazena os dados do usuário no localStorage
+        const usuario = {
+          id: response.id,
+          nome: response.nome,
+          email: response.email,
+          tipoUsuario: response.tipoUsuario,
+          ativo: true
+        };
+        localStorage.setItem('usuario', JSON.stringify(usuario));
+        console.log('Usuário armazenado:', usuario);
+      })
+    );
+  }
 
   addToken(token: string) {
     localStorage.setItem('token', token);
@@ -33,6 +45,7 @@ export class AuthService {
 
   removerToken() {
     localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
   }
 
   getToken() {
@@ -48,12 +61,19 @@ export class AuthService {
   }
 
   hasRole(role: string) {
-    let user = this.jwtDecode() as Usuario;
-    if (user.tipoUsuario == role) return true;
-    else return false;
+    const user = this.getUsuarioLogado();
+    if (user) {
+      console.log('Verificando role:', user.tipoUsuario, '===', role);
+      return user.tipoUsuario === role;
+    }
+    return false;
   }
 
-  getUsuarioLogado() {
-    return this.jwtDecode() as Usuario;
+  getUsuarioLogado(): Usuario | null {
+    const usuarioStr = localStorage.getItem('usuario');
+    if (usuarioStr) {
+      return JSON.parse(usuarioStr) as Usuario;
+    }
+    return null;
   }
 }

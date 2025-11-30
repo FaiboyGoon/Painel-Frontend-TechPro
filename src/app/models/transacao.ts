@@ -7,7 +7,7 @@ export class Transacao {
   data!: Date;
   caracteristica!: string;
   valorReais!: number;
-  taxaCambio!: Taxacambio;
+  taxaCambio!: number | Taxacambio;
   valorDolares!: number;
   tipoTransacao!: TipoTransacao;
   statusPagamento!: StatusPagamento;

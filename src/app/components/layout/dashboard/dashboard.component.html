@@ -59,99 +59,125 @@
   </div>
 
   <div
-  *ngIf="
-    dashboardData &&
-    (dashboardData.totalCreditosMes || dashboardData.totalCreditosAno)
-  "
->
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <h5 class="card-title mb-4 text-center">Resumo Financeiro</h5>
+    *ngIf="
+      dashboardData &&
+      (dashboardData.totalCreditosMes || dashboardData.totalCreditosAno)
+    "
+  >
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title mb-4 text-center">Resumo Financeiro</h5>
 
-      <div class="row align-items-center">
-        <!-- lista na esquerda-->
-        <div class="col-lg-6 col-md-6 mb-4 mb-md-0">
-          <ul class="list-group list-group-flush">
-            <li
-              class="list-group-item d-flex justify-content-between"
-              *ngIf="dashboardData.totalPagamentosMes !== undefined"
-            >
-              <span>Pagamentos no mês:</span>
-              <strong>{{ dashboardData.totalPagamentosMes }}</strong>
-            </li>
-            <li
-              class="list-group-item d-flex justify-content-between"
-              *ngIf="dashboardData.totalDebitosPrazoMes !== undefined"
-            >
-              <span>Débitos a prazo no mês:</span>
-              <strong>{{ dashboardData.totalDebitosPrazoMes }}</strong>
-            </li>
-            <li
-              class="list-group-item d-flex justify-content-between"
-              *ngIf="dashboardData.totalCreditosMes !== undefined"
-            >
-              <span>Créditos no mês:</span>
-              <strong>{{ dashboardData.totalCreditosMes }}</strong>
-            </li>
-            <li
-              class="list-group-item d-flex justify-content-between"
-              *ngIf="dashboardData.totalDebitosMes !== undefined"
-            >
-              <span>Débitos no mês:</span>
-              <strong>{{ dashboardData.totalDebitosMes }}</strong>
-            </li>
-            <li
-              class="list-group-item d-flex justify-content-between"
-              *ngIf="dashboardData.saldoMes !== undefined"
-            >
-              <span>Saldo do mês:</span>
-              <strong>{{ dashboardData.saldoMes }}</strong>
-            </li>
-            <li
-              class="list-group-item d-flex justify-content-between"
-              *ngIf="dashboardData.totalCreditosAno !== undefined"
-            >
-              <span>Créditos no ano:</span>
-              <strong>{{ dashboardData.totalCreditosAno }}</strong>
-            </li>
-            <li
-              class="list-group-item d-flex justify-content-between"
-              *ngIf="dashboardData.totalDebitosAno !== undefined"
-            >
-              <span>Débitos no ano:</span>
-              <strong>{{ dashboardData.totalDebitosAno }}</strong>
-            </li>
-            <li
-              class="list-group-item d-flex justify-content-between"
-              *ngIf="dashboardData.saldoAno !== undefined"
-            >
-              <span>Saldo do ano:</span>
-              <strong>{{ dashboardData.saldoAno }}</strong>
-            </li>
-            <li
-              class="list-group-item d-flex justify-content-between"
-              *ngIf="dashboardData.saldoAcumulado !== undefined"
-            >
-              <span>Saldo acumulado:</span>
-              <strong>{{ dashboardData.saldoAcumulado }}</strong>
-            </li>
-          </ul>
-        </div>
+        <div class="row align-items-center">
+          
+          <div class="col-lg-6 col-md-6 mb-4 mb-md-0">
+            <ul class="list-group list-group-flush">
+              <li
+                class="list-group-item d-flex justify-content-between align-items-start"
+                *ngIf="dashboardData.totalPagamentosMes !== undefined"
+              >
+                <span>Pagamentos no mês:</span>
+                <div class="text-end">
+                  <strong class="d-block">{{ dashboardData.totalPagamentosMes | currency : "BRL" }}</strong>
+                  <small class="text-muted">{{ (dashboardData.totalPagamentosMes / taxaCambioAtual) | currency : "USD" }}</small>
+                </div>
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-start"
+                *ngIf="dashboardData.totalDebitosPrazoMes !== undefined"
+              >
+                <span>Débitos a prazo no mês:</span>
+                <div class="text-end">
+                  <strong class="d-block">{{ dashboardData.totalDebitosPrazoMes | currency : "BRL" }}</strong>
+                  <small class="text-muted">{{ (dashboardData.totalDebitosPrazoMes / taxaCambioAtual) | currency : "USD" }}</small>
+                </div>
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-start"
+                *ngIf="dashboardData.totalCreditosMes !== undefined"
+              >
+                <span>Créditos no mês:</span>
+                <div class="text-end">
+                  <strong class="d-block">{{ dashboardData.totalCreditosMes | currency : "BRL" }}</strong>
+                  <small class="text-muted">{{ (dashboardData.totalCreditosMes / taxaCambioAtual) | currency : "USD" }}</small>
+                </div>
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-start"
+                *ngIf="dashboardData.totalDebitosMes !== undefined"
+              >
+                <span>Débitos no mês:</span>
+                <div class="text-end">
+                  <strong class="d-block">{{ dashboardData.totalDebitosMes | currency : "BRL" }}</strong>
+                  <small class="text-muted">{{ (dashboardData.totalDebitosMes / taxaCambioAtual) | currency : "USD" }}</small>
+                </div>
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-start"
+                *ngIf="dashboardData.saldoMes !== undefined"
+              >
+                <span>Saldo do mês:</span>
+                <div class="text-end">
+                  <strong class="d-block">{{ dashboardData.saldoMes | currency : "BRL" }}</strong>
+                  <small class="text-muted">{{ (dashboardData.saldoMes / taxaCambioAtual) | currency : "USD" }}</small>
+                </div>
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-start"
+                *ngIf="dashboardData.totalCreditosAno !== undefined"
+              >
+                <span>Créditos no ano:</span>
+                <div class="text-end">
+                  <strong class="d-block">{{ dashboardData.totalCreditosAno | currency : "BRL" }}</strong>
+                  <small class="text-muted">{{ (dashboardData.totalCreditosAno / taxaCambioAtual) | currency : "USD" }}</small>
+                </div>
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-start"
+                *ngIf="dashboardData.totalDebitosAno !== undefined"
+              >
+                <span>Débitos no ano:</span>
+                <div class="text-end">
+                  <strong class="d-block">{{ dashboardData.totalDebitosAno | currency : "BRL" }}</strong>
+                  <small class="text-muted">{{ (dashboardData.totalDebitosAno / taxaCambioAtual) | currency : "USD" }}</small>
+                </div>
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-start"
+                *ngIf="dashboardData.saldoAno !== undefined"
+              >
+                <span>Saldo do ano:</span>
+                <div class="text-end">
+                  <strong class="d-block">{{ dashboardData.saldoAno | currency : "BRL" }}</strong>
+                  <small class="text-muted">{{ (dashboardData.saldoAno / taxaCambioAtual) | currency : "USD" }}</small>
+                </div>
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-start"
+                *ngIf="dashboardData.saldoAcumulado !== undefined"
+              >
+                <span>Saldo acumulado:</span>
+                <div class="text-end">
+                  <strong class="d-block">{{ dashboardData.saldoAcumulado | currency : "BRL" }}</strong>
+                  <small class="text-muted">{{ (dashboardData.saldoAcumulado / taxaCambioAtual) | currency : "USD" }}</small>
+                </div>
+              </li>
+            </ul>
+          </div>
 
-        <!-- Gráfico pra direita -->
-        <div class="col-lg-6 col-md-6 text-center">
-          <div
-            class="chart-container mx-auto"
-            style="max-width: 300px; height: 300px;"
-          >
-            <canvas id="dashboardChart"></canvas>
+          
+          <div class="col-lg-6 col-md-6 text-center">
+            <div
+              class="chart-container mx-auto"
+              style="max-width: 300px; height: 300px;"
+            >
+              <canvas id="dashboardChart"></canvas>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-
 
   <div *ngIf="!dashboardData || getKeys(dashboardData).length === 0">
     <p class="text-muted text-center">

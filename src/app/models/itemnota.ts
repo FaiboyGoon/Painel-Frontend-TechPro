@@ -7,4 +7,5 @@ export class Itemnota {
   valorUnitario!: number;
   valorTotal!: number;
   transacao!: Transacao;
+  transacaoId!: number;
 }

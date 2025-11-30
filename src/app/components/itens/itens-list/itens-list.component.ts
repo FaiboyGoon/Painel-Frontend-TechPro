@@ -10,19 +10,20 @@ import {
 import { ItensFormComponent } from '../itens-form/itens-form.component';
 import { Itemnota } from '../../../models/itemnota';
 import { ItemnotaService } from '../../../services/itemnota.service';
+import { CambiohistoricoService } from '../../../services/cambiohistorico.service';
 import {
   MdbModalModule,
   MdbModalRef,
   MdbModalService,
 } from 'mdb-angular-ui-kit/modal';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 import Swal from 'sweetalert2';
-import { Title } from 'chart.js';
 
 @Component({
   selector: 'app-itens-list',
   standalone: true,
-  imports: [MdbModalModule, FormsModule],
+  imports: [MdbModalModule, FormsModule, CommonModule],
   templateUrl: './itens-list.component.html',
   styleUrl: './itens-list.component.scss',
 })
@@ -31,23 +32,50 @@ export class ItensListComponent {
   @Output('meuEvento') meuEvento = new EventEmitter();
 
   lista: Itemnota[] = [];
+  listaFiltrada: Itemnota[] = [];
   itemEdit!: Itemnota;
-  pesquisa: string = '';
-  tipoPesquisa: 'id' | 'descricao' = 'descricao';
+  taxaCambioAtual: number = 5.8; // Valor padrão
+
+  filtros = {
+    pesquisa: '',
+    tipoPesquisa: 'descricao' as 'id' | 'descricao',
+    valorMin: null as number | null,
+    valorMax: null as number | null,
+  };
 
   modalService = inject(MdbModalService);
   modalRef!: MdbModalRef<any>;
-
   itemService = inject(ItemnotaService);
+  cambioService = inject(CambiohistoricoService);
 
   constructor() {
+    this.carregarTaxaCambio();
     this.buscarTodosItens();
+  }
+
+  carregarTaxaCambio() {
+    this.cambioService.atualizarTaxaDia().subscribe({
+      next: (taxa: any) => {
+        if (typeof taxa === 'number') {
+          this.taxaCambioAtual = taxa;
+        } else if (taxa && taxa.cambio) {
+          this.taxaCambioAtual = taxa.cambio;
+        } else if (taxa && taxa.taxaUsdBrl) {
+          this.taxaCambioAtual = taxa.taxaUsdBrl;
+        }
+        console.log('Taxa de câmbio carregada:', this.taxaCambioAtual);
+      },
+      error: (e) => {
+        console.error('Erro ao carregar taxa de câmbio:', e);
+      },
+    });
   }
 
   buscarTodosItens() {
     this.itemService.buscarTodosItens().subscribe({
       next: (listaRetornada) => {
         this.lista = listaRetornada;
+        this.listaFiltrada = [...this.lista];
       },
       error: (e) => {
         Swal.fire('Erro', e.error, 'error');
@@ -55,34 +83,64 @@ export class ItensListComponent {
     });
   }
 
-  search() {
-    switch (this.tipoPesquisa) {
-      case 'id':
-        const id = Number(this.pesquisa);
-        if (!isNaN(id)) {
-          this.itemService.buscarItemPorId(id).subscribe((lista) => {
-            this.lista = lista ? [lista] : [];
-          });
+  aplicarFiltros() {
+    this.listaFiltrada = this.lista.filter((item) => {
+      // Filtro por pesquisa (ID ou descrição)
+      let passaPesquisa = true;
+      if (this.filtros.pesquisa) {
+        if (this.filtros.tipoPesquisa === 'id') {
+          const id = Number(this.filtros.pesquisa);
+          passaPesquisa = !isNaN(id) && item.id === id;
+        } else {
+          passaPesquisa = item.descricao
+            .toLowerCase()
+            .includes(this.filtros.pesquisa.toLowerCase());
         }
+      }
 
-        break;
+      // Filtro por valor mínimo
+      let passaValorMin = true;
+      if (this.filtros.valorMin !== null) {
+        passaValorMin = item.valorUnitario >= this.filtros.valorMin;
+      }
 
-      case 'descricao':
-        this.itemService
-          .buscarItensPorDescricao(this.pesquisa)
-          .subscribe((lista) => {
-            this.lista = lista;
-          });
-        break;
+      // Filtro por valor máximo
+      let passaValorMax = true;
+      if (this.filtros.valorMax !== null) {
+        passaValorMax = item.valorUnitario <= this.filtros.valorMax;
+      }
 
-      default:
-        Swal.fire({
-          title: 'Pesquisa Inválida',
-          text: 'Tente Novamente!',
-          icon: 'error',
-          confirmButtonText: 'Ok',
-        });
+      return passaPesquisa && passaValorMin && passaValorMax;
+    });
+
+    if (this.listaFiltrada.length === 0) {
+      Swal.fire({
+        title: 'Nenhum item encontrado',
+        text: 'Tente ajustar os filtros',
+        icon: 'info',
+        confirmButtonText: 'Ok',
+      });
     }
+  }
+
+  limparFiltros() {
+    this.filtros = {
+      pesquisa: '',
+      tipoPesquisa: 'descricao',
+      valorMin: null,
+      valorMax: null,
+    };
+    this.listaFiltrada = [...this.lista];
+  }
+
+  calcularValorTotalEstoque(): number {
+    return this.listaFiltrada.reduce((total, item) => {
+      return total + item.quantidade * item.valorUnitario;
+    }, 0);
+  }
+
+  search() {
+    this.aplicarFiltros();
   }
 
   new() {
@@ -134,14 +192,14 @@ export class ItensListComponent {
   }
 
   abrirModal(item: Itemnota) {
-      this.modalRef = this.modalService.open(ItensFormComponent, {
-        data: { item },
-      });
-  
-      this.modalRef.onClose.subscribe((result) => {
-        if (result === 'saved') {
-          this.buscarTodosItens();
-        }
-      });
-    }
+    this.modalRef = this.modalService.open(ItensFormComponent, {
+      data: { item },
+    });
+
+    this.modalRef.onClose.subscribe((result) => {
+      if (result === 'saved') {
+        this.buscarTodosItens();
+      }
+    });
+  }
 }

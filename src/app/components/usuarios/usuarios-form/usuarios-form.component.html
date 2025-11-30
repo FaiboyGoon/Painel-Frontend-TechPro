@@ -6,7 +6,7 @@
     <div class="col-4">
       <div class="card">
         <div class="card-body centre">
-          <h3>Cadastro de usuario</h3>
+          <h3>Cadastro de usuário</h3>
           <br />
 
           <form #formulario="ngForm" (ngSubmit)="save()">
@@ -18,10 +18,12 @@
                 name="nome-usuario"
                 class="form-control"
                 [(ngModel)]="usuario.nome"
+                #nomeInput="ngModel"
               />
-              <label mdbLabel class="form-label" for="nome-usuario"
-                >Nome:</label
-              >
+              <label mdbLabel class="form-label" for="nome-usuario">Nome:</label>
+              <small class="text-danger" *ngIf="nomeInput.invalid && nomeInput.touched">
+                Nome é obrigatório
+              </small>
             </mdb-form-control>
 
             <br />
@@ -33,12 +35,14 @@
                 name="email"
                 class="form-control"
                 [(ngModel)]="usuario.email"
+                #emailInput="ngModel"
+                email
               />
               <label mdbLabel class="form-label" for="email">Email:</label>
-              <!-- <small class="text-danger" *ngIf="backendErrors['email']">{{
-                backendErrors["email"]
-              }}</small>
-            -->
+              <small class="text-danger" *ngIf="emailInput.invalid && emailInput.touched">
+                <span *ngIf="emailInput.errors?.['required']">Email é obrigatório</span>
+                <span *ngIf="emailInput.errors?.['email']">Email inválido</span>
+              </small>
             </mdb-form-control>
 
             <br />
@@ -50,25 +54,36 @@
                 name="senha"
                 class="form-control"
                 [(ngModel)]="senha"
+                minlength="5"
+                #senhaInput="ngModel"
               />
               <label mdbLabel class="form-label" for="senha">Senha:</label>
+              <small class="text-danger" *ngIf="senhaInput.invalid && senhaInput.touched">
+                <span *ngIf="senhaInput.errors?.['required']">Senha é obrigatória</span>
+                <span *ngIf="senhaInput.errors?.['minlength']">Senha deve ter no mínimo 5 caracteres</span>
+              </small>
             </mdb-form-control>
 
             <br />
-              <label mdbLabel class="form-label" for="tiposUsuario"
-                >Tipo de Usuário</label
-              >
+            <div class="mb-3">
+              <label mdbLabel class="form-label" for="tipoUsuario">Tipo de Usuário</label>
               <select
                 id="tipoUsuario"
                 class="form-select"
                 name="tipoUsuario"
                 [(ngModel)]="usuario.tipoUsuario"
                 required
+                #tipoInput="ngModel"
               >
-                <option *ngFor="let tipo of tipoUsuarioList" [value]="tipo.value">
+                <option [ngValue]="undefined" disabled>Selecione um tipo</option>
+                <option *ngFor="let tipo of tipoUsuarioList" [ngValue]="tipo.value">
                   {{ tipo.label }}
                 </option>
               </select>
+              <small class="text-danger" *ngIf="tipoInput.invalid && tipoInput.touched">
+                Tipo de usuário é obrigatório
+              </small>
+            </div>
 
             <br />
             <div class="row mb-4">

@@ -43,12 +43,14 @@
     </div>
   </div>
 
+  <!-- Cards de Resumo - Agora com Reais e Dólares -->
   <div *ngIf="resumoMensal" class="row mb-4">
     <div class="col-md-4">
       <div class="card bg-success text-white">
         <div class="card-body">
           <h5>Total Créditos</h5>
-          <p>{{ resumoMensal.totalCreditos | currency : "BRL" }}</p>
+          <p class="mb-1">{{ resumoMensal.totalCreditos | currency : "BRL" }}</p>
+          <small>{{ (resumoMensal.totalCreditos / taxaCambioAtual) | currency : "USD" }}</small>
         </div>
       </div>
     </div>
@@ -56,7 +58,8 @@
       <div class="card bg-danger text-white">
         <div class="card-body">
           <h5>Total Débitos</h5>
-          <p>{{ resumoMensal.totalDebitos | currency : "BRL" }}</p>
+          <p class="mb-1">{{ resumoMensal.totalDebitos | currency : "BRL" }}</p>
+          <small>{{ (resumoMensal.totalDebitos / taxaCambioAtual) | currency : "USD" }}</small>
         </div>
       </div>
     </div>
@@ -64,7 +67,8 @@
       <div class="card bg-primary text-white">
         <div class="card-body">
           <h5>Saldo Mês</h5>
-          <p>{{ resumoMensal.saldoMes | currency : "BRL" }}</p>
+          <p class="mb-1">{{ resumoMensal.saldoMes | currency : "BRL" }}</p>
+          <small>{{ (resumoMensal.saldoMes / taxaCambioAtual) | currency : "USD" }}</small>
         </div>
       </div>
     </div>
@@ -74,71 +78,49 @@
     <div class="card-body">
       <h5 class="card-title">Extratos do Mês</h5>
 
-      <table
-        *ngIf="extratos.length > 0"
-        class="table table-hover table-striped mt-3"
-      >
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Total Créditos</th>
-            <th>Total Débitos</th>
-            <th>Saldo Dia</th>
-            <th>Saldo Acumulado</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (extrato of extratos; track $index) {
-          <tr>
-            <td>{{ extrato.data }}</td>
-            <td>
-              {{ extrato.totalCreditosDolares | currency : "BRL" }}
-            </td>
-            <td>
-              {{ extrato.totalDebitosDolares | currency : "BRL" }}
-            </td>
-            <td>{{ extrato.saldoDiaDolares | currency : "BRL" }}</td>
-            <td>
-              {{ extrato.saldoAcumuladoDolares | currency : "BRL" }}
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <table
+          *ngIf="extratos.length > 0"
+          class="table table-hover table-striped mt-3"
+        >
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Total Créditos</th>
+              <th>Total Débitos</th>
+              <th>Saldo Dia</th>
+              <th>Saldo Acumulado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (extrato of extratos; track $index) {
+            <tr>
+              <td>{{ extrato.data }}</td>
+              <td>
+                <div>{{ extrato.totalCreditosDolares * taxaCambioAtual | currency : "BRL" }}</div>
+                <small class="text-muted">{{ extrato.totalCreditosDolares | currency : "USD" }}</small>
+              </td>
+              <td>
+                <div>{{ extrato.totalDebitosDolares * taxaCambioAtual | currency : "BRL" }}</div>
+                <small class="text-muted">{{ extrato.totalDebitosDolares | currency : "USD" }}</small>
+              </td>
+              <td>
+                <div>{{ extrato.saldoDiaDolares * taxaCambioAtual | currency : "BRL" }}</div>
+                <small class="text-muted">{{ extrato.saldoDiaDolares | currency : "USD" }}</small>
+              </td>
+              <td>
+                <div>{{ extrato.saldoAcumuladoDolares * taxaCambioAtual | currency : "BRL" }}</div>
+                <small class="text-muted">{{ extrato.saldoAcumuladoDolares | currency : "USD" }}</small>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
 
       <div *ngIf="extratos.length === 0" class="text-center">
         Nenhum extrato encontrado.
       </div>
     </div>
   </div>
-
- <!-- <div class="row mt-4">
-    <div class="col-md-4">
-      <mdb-form-control>
-        <input
-          mdbInput
-          type="date"
-          id="form1Example3"
-          class="form-control"
-          [(ngModel)]="data"
-          placeholder="mm-dd-yyyy"
-          name="data"
-        />
-        <label mdbLabel class="form-label" for="form1Example3"
-          >Data para atualizar</label
-        >
-      </mdb-form-control>
-    </div>
-    <div class="col-md-4 d-flex align-items-end">
-      <button
-        type="button"
-        class="btn btn-primary"
-        mdbRipple
-        (click)="atualizarExtratoDia()"
-      >
-        Atualizar Dia
-      </button>
-    </div>
-  </div>
--->
 </div>

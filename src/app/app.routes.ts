@@ -9,6 +9,7 @@ import { ExtratosListComponent } from './components/extratos/extratos-list/extra
 import { UsuariosFormComponent } from './components/usuarios/usuarios-form/usuarios-form.component';
 import { LoginComponent } from './components/layout/login/login.component';
 import { authGuard } from './auth/auth.guard';
+import { adminGuard } from './auth/admin.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -27,7 +28,7 @@ export const routes: Routes = [
       { path: 'transacoes/new', component: TransacoesFormComponent },
       { path: 'transacoes/edit/:id', component: TransacoesFormComponent },
       { path: 'extratos', component: ExtratosListComponent },
-      { path: 'usuarios/new', component: UsuariosFormComponent },
+      { path: 'usuarios/new', component: UsuariosFormComponent, canActivate: [adminGuard] },
     ],
   },
 ];
