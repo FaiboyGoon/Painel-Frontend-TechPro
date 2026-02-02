@@ -3,7 +3,7 @@ import { Transacao } from '../../../models/transacao';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TransacaoService } from '../../../services/transacao.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { StatusPagamento, TipoPagamento, TipoTransacao, } from '../../../models/enum';
+import { StatusPagamento, TipoPagamento, TipoTransacao } from '../../../models/enum';
 import { MdbFormsModule } from 'mdb-angular-ui-kit/forms';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
@@ -14,7 +14,13 @@ import { CambiohistoricoService } from '../../../services/cambiohistorico.servic
 @Component({
   selector: 'app-transacoes-form',
   standalone: true,
-  imports: [FormsModule, MdbFormsModule, CommonModule, ReactiveFormsModule, MdbModalModule],
+  imports: [
+    FormsModule,
+    MdbFormsModule,
+    CommonModule,
+    ReactiveFormsModule,
+    MdbModalModule,
+  ],
   templateUrl: './transacoes-form.component.html',
   styleUrl: './transacoes-form.component.scss',
 })
@@ -31,6 +37,8 @@ export class TransacoesFormComponent {
   taxaCambio!: Taxacambio;
   moedaSelecionada: string = 'BRL';
   valorEntrada: number = 0;
+
+  quantidadeItens: number = 0;
 
   tipoTransacoes = [
     { value: TipoTransacao.CREDITO, label: 'Crédito' },
@@ -55,73 +63,52 @@ export class TransacoesFormComponent {
     { value: 'USD', label: 'Dólar (US$)' },
   ];
 
-  obterValorEmReais(): number {
-    if (this.valorEntrada === undefined || this.valorEntrada === null) {
-      return 0;
-    }
-    
-    if (!this.taxaCambio || this.taxaCambio.cambio === undefined || this.taxaCambio.cambio === 0) {
-      return this.moedaSelecionada === 'BRL' ? this.valorEntrada : 0;
-    }
-    
-    if (this.moedaSelecionada === 'USD') {
-      return this.valorEntrada * this.taxaCambio.cambio;
-    }
-    
-    return this.valorEntrada;
-  }
-
-  obterValorEmDolares(): number {
-    if (this.valorEntrada === undefined || this.valorEntrada === null) {
-      return 0;
-    }
-    
-    if (!this.taxaCambio || this.taxaCambio.cambio === undefined || this.taxaCambio.cambio === 0) {
-      return this.moedaSelecionada === 'USD' ? this.valorEntrada : 0;
-    }
-    
-    if (this.moedaSelecionada === 'BRL') {
-      return this.valorEntrada / this.taxaCambio.cambio;
-    }
-    
-    return this.valorEntrada;
-  }
-
   constructor(public modalRef: MdbModalRef<TransacoesFormComponent>) {
     this.atualizarTaxaInicial();
 
-    let id = this.rotaActivada.snapshot.params['id'];
+    const id = this.rotaActivada.snapshot.params['id'];
     if (id) {
       this.buscarTransacaoPorId(id);
     }
   }
 
+  obterValorEmReais(): number {
+    if (this.valorEntrada == null) return 0;
+
+    if (!this.taxaCambio || !this.taxaCambio.cambio) {
+      return this.moedaSelecionada === 'BRL' ? this.valorEntrada : 0;
+    }
+
+    return this.moedaSelecionada === 'USD'
+      ? this.valorEntrada * this.taxaCambio.cambio
+      : this.valorEntrada;
+  }
+
+  obterValorEmDolares(): number {
+    if (this.valorEntrada == null) return 0;
+
+    if (!this.taxaCambio || !this.taxaCambio.cambio) {
+      return this.moedaSelecionada === 'USD' ? this.valorEntrada : 0;
+    }
+
+    return this.moedaSelecionada === 'BRL'
+      ? this.valorEntrada / this.taxaCambio.cambio
+      : this.valorEntrada;
+  }
+
   atualizarTaxaInicial() {
     this.cambioService.atualizarTaxaDia().subscribe({
       next: (taxa: any) => {
-        console.log('Resposta da API:', taxa);
-        
         if (typeof taxa === 'number') {
           this.taxaCambio = { cambio: taxa };
-          console.log('Taxa carregada (número):', this.taxaCambio);
-        } 
-        else if (taxa && taxa.cambio) {
+        } else if (taxa?.cambio) {
           this.taxaCambio = taxa;
-          console.log('Taxa carregada (objeto):', this.taxaCambio);
-        }
-        else if (taxa && taxa.taxaUsdBrl) {
+        } else if (taxa?.taxaUsdBrl) {
           this.taxaCambio = { cambio: taxa.taxaUsdBrl };
-          console.log('Taxa carregada (taxaUsdBrl):', this.taxaCambio);
         }
       },
       error: (e) => {
-        console.error('Erro ao carregar taxa:', e);
-        Swal.fire({
-          title: 'Erro ao carregar a taxa de câmbio',
-          text: e.error,
-          icon: 'error',
-          confirmButtonText: 'Ok',
-        });
+        Swal.fire('Erro ao carregar a taxa de câmbio', e.error, 'error');
       },
     });
   }
@@ -135,6 +122,13 @@ export class TransacoesFormComponent {
     this.transacaoService.buscarTransacaoPorId(id).subscribe({
       next: (retorno) => {
         this.transacao = retorno;
+
+        if (!this.transacao.itens) {
+          this.transacao.itens = [];
+        }
+
+        this.quantidadeItens = this.transacao.itens.length;
+
         this.valorEntrada = this.transacao.valorReais;
         this.moedaSelecionada = 'BRL';
       },
@@ -145,7 +139,6 @@ export class TransacoesFormComponent {
   }
 
   save() {
-    // Calcula os valores
     if (this.moedaSelecionada === 'USD') {
       this.transacao.valorDolares = this.valorEntrada;
       this.transacao.valorReais = this.valorEntrada * this.taxaCambio.cambio;
@@ -154,84 +147,47 @@ export class TransacoesFormComponent {
       this.transacao.valorDolares = this.valorEntrada / this.taxaCambio.cambio;
     }
 
-    // CORREÇÃO: Cria um objeto para enviar com taxaCambio como número
+    this.transacao.itens = Array.from(
+      { length: this.quantidadeItens },
+      (_, i) => ({ id: i + 1 })
+    ) as any[];
+
     const transacaoParaEnviar = {
       ...this.transacao,
-      taxaCambio: this.taxaCambio.cambio
+      taxaCambio: this.taxaCambio.cambio,
     };
 
     if (this.transacao.id > 0) {
       this.transacaoService
         .atualizarTransacao(this.transacao.id, transacaoParaEnviar as any)
         .subscribe({
-          next: () => {
-            Swal.fire({
-              title: 'Transação Atualizada com Sucesso!',
-              icon: 'success',
-              confirmButtonText: 'Ok',
-            });
-            this.roteador.navigate(['principal/transacoes']);
-            this.meuEvento.emit('OK');
-            this.close();
-          },
-          error: (e) => {
-            Swal.fire('Erro', e.error, 'error');
-            this.roteador.navigate(['principal/transacoes']);
-            this.meuEvento.emit('OK');
-            this.close();
-          },
+          next: () => this.finalizarSucesso('Transação Atualizada com Sucesso!'),
+          error: (e) => this.finalizarErro(e),
         });
-    }
-    else {
+    } else {
       this.transacaoService.criarTransacao(transacaoParaEnviar as any).subscribe({
-        next: () => {
-          Swal.fire({
-            title: 'Transação Criada com Sucesso!',
-            icon: 'success',
-            confirmButtonText: 'Ok',
-          });
-          this.roteador.navigate(['principal/transacoes']);
-          this.meuEvento.emit('OK');
-          this.close();
-        },
-        error: (e) => {
-          Swal.fire('Erro', e.error, 'error');
-          this.roteador.navigate(['principal/transacoes']);
-          this.meuEvento.emit('OK');
-          this.close();
-        },
+        next: () => this.finalizarSucesso('Transação Criada com Sucesso!'),
+        error: (e) => this.finalizarErro(e),
       });
     }
   }
 
   atualizarTaxa() {
-    this.cambioService.atualizarTaxaDia().subscribe({
-      next: (taxa: any) => {
-        console.log('Resposta da API:', taxa);
-        
-        if (typeof taxa === 'number') {
-          this.taxaCambio = { cambio: taxa };
-          console.log('Taxa atualizada (número):', this.taxaCambio);
-        } 
-        else if (taxa && taxa.cambio) {
-          this.taxaCambio = taxa;
-          console.log('Taxa atualizada (objeto):', this.taxaCambio);
-        }
-        else if (taxa && taxa.taxaUsdBrl) {
-          this.taxaCambio = { cambio: taxa.taxaUsdBrl };
-          console.log('Taxa atualizada (taxaUsdBrl):', this.taxaCambio);
-        }
-      },
-      error: (e) => {
-        console.error('Erro ao carregar taxa:', e);
-        Swal.fire({
-          title: 'Erro ao carregar a taxa de câmbio',
-          text: e.error,
-          icon: 'error',
-          confirmButtonText: 'Ok',
-        });
-      },
-    });
+    this.atualizarTaxaInicial();
+  }
+
+  finalizarSucesso(mensagem: string) {
+    Swal.fire(mensagem, '', 'success');
+    this.roteador.navigate(['principal/transacoes']);
+    this.meuEvento.emit('OK');
+    this.close();
+  }
+
+  finalizarErro(e: any) {
+    Swal.fire('Erro', e.error, 'error');
+    this.roteador.navigate(['principal/transacoes']);
+    this.meuEvento.emit('OK');
+    this.close();
   }
 
   close() {
