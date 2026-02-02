@@ -63,4 +63,12 @@ export class TransacaoService {
   excluirTransacao(id: number): Observable<void> {
     return this.http.delete<void>(`${this.API}/${id}`);
   }
+
+  buscarTransacoesPorCaracteristica(caracteristica: string) {
+  return this.http.get<Transacao[]>(
+    `${this.API}/buscar`,
+    { params: { caracteristica } }
+  );
+}
+
 }

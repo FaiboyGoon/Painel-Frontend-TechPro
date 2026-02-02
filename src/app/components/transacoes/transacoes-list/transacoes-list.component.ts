@@ -88,13 +88,41 @@ export class TransacoesListComponent {
   }
 
   search() {
-    const id = Number(this.pesquisa);
-    if (!isNaN(id)) {
-      this.transacaoService.buscarTransacaoPorId(id).subscribe((resultado) => {
-        this.resultados = resultado ? [resultado] : [];
-      });
-    }
+  if (!this.pesquisa || this.pesquisa.trim() === '') {
+    this.buscarTodasTransacoes();
+    return;
   }
+
+  const valor = this.pesquisa.trim();
+
+  // Se for número → busca por ID
+  if (!isNaN(Number(valor))) {
+    const id = Number(valor);
+
+    this.transacaoService.buscarTransacaoPorId(id).subscribe({
+      next: (resultado) => {
+        this.lista = resultado ? [resultado] : [];
+      },
+      error: () => {
+        this.lista = [];
+        Swal.fire('Aviso', 'Transação não encontrada', 'warning');
+      }
+    });
+
+  } 
+  // Se for texto → busca por descrição
+  else {
+    this.transacaoService.buscarTransacoesPorCaracteristica(valor).subscribe({
+      next: (resultado) => {
+        this.lista = resultado;
+      },
+      error: () => {
+        this.lista = [];
+        Swal.fire('Aviso', 'Nenhuma transação encontrada', 'warning');
+      }
+    });
+  }
+}
 
   new() {
     this.transacaoEdit = new Transacao();
