@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { MdbModalModule, MdbModalRef, MdbModalService } from 'mdb-angular-ui-kit/modal';
 import { Taxacambio } from '../../../models/taxacambio';
 import { CambiohistoricoService } from '../../../services/cambiohistorico.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-transacoes-form',
@@ -39,6 +40,7 @@ export class TransacoesFormComponent {
   valorEntrada: number = 0;
 
   quantidadeItens: number = 0;
+  quantidadeItensOriginal: number = 0; // Para rastrear mudanças
 
   tipoTransacoes = [
     { value: TipoTransacao.CREDITO, label: 'Crédito' },
@@ -119,7 +121,7 @@ export class TransacoesFormComponent {
   }
 
   buscarTransacaoPorId(id: number) {
-    this.transacaoService.buscarTransacaoPorId(id).subscribe({
+    this.transacaoService.buscarTransacaoComItens(id).subscribe({
       next: (retorno) => {
         this.transacao = retorno;
 
@@ -128,6 +130,7 @@ export class TransacoesFormComponent {
         }
 
         this.quantidadeItens = this.transacao.itens.length;
+        this.quantidadeItensOriginal = this.transacao.itens.length;
 
         this.valorEntrada = this.transacao.valorReais;
         this.moedaSelecionada = 'BRL';
@@ -147,26 +150,45 @@ export class TransacoesFormComponent {
       this.transacao.valorDolares = this.valorEntrada / this.taxaCambio.cambio;
     }
 
-    this.transacao.itens = Array.from(
-      { length: this.quantidadeItens },
-      (_, i) => ({ id: i + 1 })
-    ) as any[];
-
     const transacaoParaEnviar = {
       ...this.transacao,
       taxaCambio: this.taxaCambio.cambio,
     };
 
     if (this.transacao.id > 0) {
-      this.transacaoService
-        .atualizarTransacao(this.transacao.id, transacaoParaEnviar as any)
-        .subscribe({
-          next: () => this.finalizarSucesso('Transação Atualizada com Sucesso!'),
-          error: (e) => this.finalizarErro(e),
-        });
+      // Modo de edição
+      const requests = [];
+
+      // Atualiza os dados da transação
+      requests.push(
+        this.transacaoService.atualizarTransacao(this.transacao.id, transacaoParaEnviar as any)
+      );
+
+      // Se a quantidade de itens mudou, atualiza também
+      if (this.quantidadeItens !== this.quantidadeItensOriginal) {
+        requests.push(
+          this.transacaoService.atualizarQuantidadeItens(this.transacao.id, this.quantidadeItens)
+        );
+      }
+
+      forkJoin(requests).subscribe({
+        next: () => this.finalizarSucesso('Transação Atualizada com Sucesso!'),
+        error: (e) => this.finalizarErro(e),
+      });
+
     } else {
       this.transacaoService.criarTransacao(transacaoParaEnviar as any).subscribe({
-        next: () => this.finalizarSucesso('Transação Criada com Sucesso!'),
+        next: (transacaoCriada) => {
+         
+          if (this.quantidadeItens > 0) {
+            this.transacaoService.atualizarQuantidadeItens(transacaoCriada.id, this.quantidadeItens).subscribe({
+              next: () => this.finalizarSucesso('Transação Criada com Sucesso!'),
+              error: (e) => this.finalizarErro(e),
+            });
+          } else {
+            this.finalizarSucesso('Transação Criada com Sucesso!');
+          }
+        },
         error: (e) => this.finalizarErro(e),
       });
     }

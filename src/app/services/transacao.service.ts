@@ -60,15 +60,21 @@ export class TransacaoService {
     return this.http.put<Transacao>(`${this.API}/${id}`, transacao);
   }
 
+  atualizarQuantidadeItens(id: number, quantidade: number): Observable<Transacao> {
+    return this.http.put<Transacao>(
+      `${this.API}/${id}/atualizar-quantidade-itens`,
+      { quantidade }
+    );
+  }
+
   excluirTransacao(id: number): Observable<void> {
     return this.http.delete<void>(`${this.API}/${id}`);
   }
 
-  buscarTransacoesPorCaracteristica(caracteristica: string) {
-  return this.http.get<Transacao[]>(
-    `${this.API}/buscar`,
-    { params: { caracteristica } }
-  );
-}
-
+  buscarTransacoesPorCaracteristica(caracteristica: string): Observable<Transacao[]> {
+    return this.http.get<Transacao[]>(
+      `${this.API}/buscar`,
+      { params: { caracteristica } }
+    );
+  }
 }
