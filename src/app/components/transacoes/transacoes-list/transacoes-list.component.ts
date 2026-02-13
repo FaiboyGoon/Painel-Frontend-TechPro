@@ -66,63 +66,65 @@ export class TransacoesListComponent {
 
   excluirTransacao(transacao: Transacao) {
     Swal.fire({
-      title: 'Deseja mesmo deletar este livro?',
+      title: 'Deseja mesmo deletar esta transação?',
       showCancelButton: true,
       confirmButtonText: 'Sim',
       cancelButtonText: 'Cancelar',
     }).then((result) => {
-      this.transacaoService.excluirTransacao(transacao.id).subscribe({
-        next: () => {
-          Swal.fire({
-            title: 'Transação Deletada com Sucesso!',
-            icon: 'success',
-            confirmButtonText: 'Ok',
-          });
-          this.buscarTodasTransacoes();
-        },
-        error: (e) => {
-          Swal.fire('Erro', e.error, 'error');
-        },
-      });
+      if (result.isConfirmed) {
+        this.transacaoService.excluirTransacao(transacao.id).subscribe({
+          next: () => {
+            Swal.fire({
+              title: 'Transação Deletada com Sucesso!',
+              icon: 'success',
+              confirmButtonText: 'Ok',
+            });
+            this.buscarTodasTransacoes();
+          },
+          error: (e) => {
+            Swal.fire('Erro', e.error, 'error');
+          },
+        });
+      }
     });
   }
 
   search() {
-  if (!this.pesquisa || this.pesquisa.trim() === '') {
-    this.buscarTodasTransacoes();
-    return;
+    if (!this.pesquisa || this.pesquisa.trim() === '') {
+      this.buscarTodasTransacoes();
+      return;
+    }
+
+    const valor = this.pesquisa.trim();
+
+    // Se for número busca por ID
+    if (!isNaN(Number(valor))) {
+      const id = Number(valor);
+
+      this.transacaoService.buscarTransacaoPorId(id).subscribe({
+        next: (resultado) => {
+          this.lista = resultado ? [resultado] : [];
+        },
+        error: () => {
+          this.lista = [];
+          Swal.fire('Aviso', 'Transação não encontrada', 'warning');
+        }
+      });
+
+    }
+    // Se for texto busca por descrição
+    else {
+      this.transacaoService.buscarTransacoesPorCaracteristica(valor).subscribe({
+        next: (resultado) => {
+          this.lista = resultado;
+        },
+        error: () => {
+          this.lista = [];
+          Swal.fire('Aviso', 'Nenhuma transação encontrada', 'warning');
+        }
+      });
+    }
   }
-
-  const valor = this.pesquisa.trim();
-
-  // Se for número → busca por ID
-  if (!isNaN(Number(valor))) {
-    const id = Number(valor);
-
-    this.transacaoService.buscarTransacaoPorId(id).subscribe({
-      next: (resultado) => {
-        this.lista = resultado ? [resultado] : [];
-      },
-      error: () => {
-        this.lista = [];
-        Swal.fire('Aviso', 'Transação não encontrada', 'warning');
-      }
-    });
-
-  } 
-  // Se for texto → busca por descrição
-  else {
-    this.transacaoService.buscarTransacoesPorCaracteristica(valor).subscribe({
-      next: (resultado) => {
-        this.lista = resultado;
-      },
-      error: () => {
-        this.lista = [];
-        Swal.fire('Aviso', 'Nenhuma transação encontrada', 'warning');
-      }
-    });
-  }
-}
 
   new() {
     this.transacaoEdit = new Transacao();
@@ -130,7 +132,7 @@ export class TransacoesListComponent {
   }
 
   edit(transacao: Transacao) {
-    this.transacaoEdit = transacao;
+    this.transacaoEdit = { ...transacao };
     this.abrirModal(this.transacaoEdit);
   }
 
@@ -140,10 +142,8 @@ export class TransacoesListComponent {
       data: { transacao },
     });
 
-    this.modalRef.onClose.subscribe((result) => {
-      if (result === 'saved') {
-        this.buscarTodasTransacoes();
-      }
+    this.modalRef.onClose.subscribe(() => {
+      this.buscarTodasTransacoes();
     });
   }
 

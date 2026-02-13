@@ -67,10 +67,12 @@ export class TransacoesFormComponent {
 
   constructor(public modalRef: MdbModalRef<TransacoesFormComponent>) {
     this.atualizarTaxaInicial();
+  }
 
-    const id = this.rotaActivada.snapshot.params['id'];
-    if (id) {
-      this.buscarTransacaoPorId(id);
+  ngOnInit() {
+    // Quando o componente inicializa, verifica se tem transação para editar
+    if (this.transacao && this.transacao.id > 0) {
+      this.buscarTransacaoPorId(this.transacao.id);
     }
   }
 
@@ -164,7 +166,6 @@ export class TransacoesFormComponent {
         this.transacaoService.atualizarTransacao(this.transacao.id, transacaoParaEnviar as any)
       );
 
-      // Se a quantidade de itens mudou, atualiza também
       if (this.quantidadeItens !== this.quantidadeItensOriginal) {
         requests.push(
           this.transacaoService.atualizarQuantidadeItens(this.transacao.id, this.quantidadeItens)
@@ -179,7 +180,6 @@ export class TransacoesFormComponent {
     } else {
       this.transacaoService.criarTransacao(transacaoParaEnviar as any).subscribe({
         next: (transacaoCriada) => {
-         
           if (this.quantidadeItens > 0) {
             this.transacaoService.atualizarQuantidadeItens(transacaoCriada.id, this.quantidadeItens).subscribe({
               next: () => this.finalizarSucesso('Transação Criada com Sucesso!'),
@@ -200,16 +200,13 @@ export class TransacoesFormComponent {
 
   finalizarSucesso(mensagem: string) {
     Swal.fire(mensagem, '', 'success');
-    this.roteador.navigate(['principal/transacoes']);
-    this.meuEvento.emit('OK');
+
+    this.meuEvento.emit('saved');
     this.close();
   }
 
   finalizarErro(e: any) {
-    Swal.fire('Erro', e.error, 'error');
-    this.roteador.navigate(['principal/transacoes']);
-    this.meuEvento.emit('OK');
-    this.close();
+    Swal.fire('Erro', e.error || 'Erro ao processar a requisição', 'error');
   }
 
   close() {
