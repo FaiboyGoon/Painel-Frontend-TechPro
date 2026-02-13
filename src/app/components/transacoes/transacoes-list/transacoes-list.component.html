@@ -1,127 +1,141 @@
-<br />
-<div class="container">
-  <div class="row">
-    <div class="col-lg-12">
-      <div class="card">
-        <div class="card-body">
-          <h3 class="centre">Menu de Transações</h3>
-          <div class="row">
-            <div class="col-6">
-              <div class="input-group mb-3">
-                <input
-                  [(ngModel)]="pesquisa"
-                  type="text"
-                  class="form-control"
-                  placeholder="Pesquisar Transação por ID:"
-                  aria-label="Recipient's username"
-                  aria-describedby="button-addon2"
-                />
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  mdbRipple
-                  (click)="search()"
-                >
-                  Search
-                </button>
-              </div>
-            </div>
-            <div class="col-6">
-              @if (!modoModal) {
-              <div class="direita">
-                <a
-                  (click)="new()"
-                  class="btn btn-success btn-rounded"
-                  mdbRippled
-                >
-                  <i class="fas fa-plus fa-sm"></i> Add Transação
-                </a>
-              </div>
-            }
-            </div>
-          </div>
-          <table border="1" class="table table-striped">
-            <thead>
-              <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Data</th>
-                <th scope="col">Característica</th>
-                @if (!modoModal) {
-                <th scope="col">Tipo Transação</th>
-                <th scope="col">Status Pagamento</th>
-                <th scope="col">Tipo Pagamento</th>
-                <th scope="col">Quantidade de Itens</th>
-                }
-              </tr>
-            </thead>
-            <tbody>
-              @for (transacao of lista; track $index) {
-              <tr>
-                <td>{{ transacao.id }}</td>
-                <td>{{ transacao.data }}</td>
-                <td>{{ transacao.caracteristica.toUpperCase() }}</td>
-                @if (!modoModal){
-                <td>
-                  {{
-                    tipoTransacaoDescricao[
-                      transacao.tipoTransacao
-                    ].toUpperCase()
-                  }}
-                </td>
-                <td>
-                  {{
-                    statusPagamentoDescricao[
-                      transacao.statusPagamento
-                    ].toUpperCase()
-                  }}
-                </td>
-                <td>
-                  {{
-                    tipoPagamentoDescricao[
-                      transacao.tipoPagamento
-                    ].toUpperCase()
-                  }}
-                </td>
-                @if (transacao.itens) {
-                <td>{{ transacao.itens.length }}</td>
-                }@else {
-                <td>---</td>
-                }
-                <td class="direita">
-                  <button
-                    type="button"
-                    class="btn btn-primary btn-rounded m-1"
-                    mdbRipple
-                    (click)="edit(transacao)"
-                  >
-                    <i class="fas fa-pencil fa-sm"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-danger btn-rounded"
-                    mdbRipple
-                    (click)="excluirTransacao(transacao)"
-                  >
-                    <i class="fas fa-trash fa-sm"></i>
-                  </button>
-                </td>
-                }@else {
-                <td class="direita">
-                  <button
-                    (click)="selecionar(transacao)"
-                    class="btn btn-success btn-rounded"
-                    mdbRippled
-                  >
-                    Selecionar
-                  </button>
-                </td>
-                }
-              </tr>
-              }
-            </tbody>
-          </table>
+<div class="container-page">
+  <div class="card panel-card">
+    <div class="card-body">
+
+      <h3 class="title-page text-center">Menu de Transações</h3>
+
+      <!-- Linha de filtros -->
+      <div class="filters-row">
+        <div class="input-group search-group">
+          <input
+            [(ngModel)]="pesquisa"
+            type="text"
+            class="form-control"
+            placeholder="Pesquisar Transação por ID ou Característica"
+          />
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="search()"
+          >
+            <i class="fas fa-search"></i> Buscar
+          </button>
+        </div>
+
+        @if (!modoModal) {
+        <button
+          (click)="new()"
+          class="btn btn-success btn-add"
+        >
+          <i class="fas fa-plus fa-sm"></i>  Add Transação
+        </button>
+        }
+      </div>
+
+      <!-- Resumo -->
+      @if (!modoModal) {
+      <div class="summary-box">
+        <div>
+          Total de Transações:
+          <strong>{{ lista.length }}</strong>
         </div>
       </div>
+      }
+
+      <!-- Tabela -->
+      <div class="table-responsive mt-3">
+        <table class="table table-bordered table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Data</th>
+              <th>Característica</th>
+
+              @if (!modoModal) {
+                <th>Tipo</th>
+                <th>Status</th>
+                <th>Pagamento</th>
+                <th>Itens</th>
+                <th class="text-center">Ações</th>
+              }
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (transacao of lista; track $index) {
+            <tr>
+              <td>{{ transacao.id }}</td>
+              <td>{{ transacao.data }}</td>
+              <td>{{ transacao.caracteristica.toUpperCase() }}</td>
+
+              @if (!modoModal) {
+
+              <td>
+                {{
+                  tipoTransacaoDescricao[
+                    transacao.tipoTransacao
+                  ].toUpperCase()
+                }}
+              </td>
+
+              <td>
+                {{
+                  statusPagamentoDescricao[
+                    transacao.statusPagamento
+                  ].toUpperCase()
+                }}
+              </td>
+
+              <td>
+                {{
+                  tipoPagamentoDescricao[
+                    transacao.tipoPagamento
+                  ].toUpperCase()
+                }}
+              </td>
+
+              <td class="text-center">
+                @if (transacao.itens) {
+                  {{ transacao.itens.length }}
+                } @else {
+                  ---
+                }
+              </td>
+
+              <td class="text-center">
+                <button
+                  class="btn btn-sm btn-primary me-1"
+                  (click)="edit(transacao)"
+                >
+                  <i class="fas fa-pencil"></i>
+                </button>
+
+                <button
+                  class="btn btn-sm btn-danger"
+                  (click)="excluirTransacao(transacao)"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+
+              } @else {
+
+              <td class="text-center">
+                <button
+                  (click)="selecionar(transacao)"
+                  class="btn btn-success btn-sm"
+                >
+                  Selecionar
+                </button>
+              </td>
+
+              }
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
     </div>
   </div>
 </div>
