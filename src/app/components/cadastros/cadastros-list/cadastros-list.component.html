@@ -1,0 +1,106 @@
+<div class="container-page">
+  <div class="card panel-card">
+    <div class="card-body">
+      
+      <h3 class="title-page text-center">Gerenciamento de Cadastros</h3>
+
+      <!-- Barra de pesquisa -->
+      <div class="filters-row mb-4">
+        <div class="input-group search-group">
+          <input
+            [(ngModel)]="pesquisa"
+            (input)="filtrar()"
+            type="text"
+            class="form-control"
+            placeholder="Pesquisar por nome, email ou tipo..."
+          />
+          <button type="button" class="btn btn-primary">
+            <i class="fas fa-search"></i> Buscar
+          </button>
+        </div>
+      </div>
+
+      <!-- Resumo -->
+      <div class="summary-box mb-3">
+        <div>
+          Total de Usuários Cadastrados:
+          <strong>{{ lista.length }}</strong>
+        </div>
+        <div>
+          Resultados da Pesquisa:
+          <strong>{{ listaFiltrada.length }}</strong>
+        </div>
+      </div>
+
+      <!-- Tabela de usuários -->
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Tipo</th>
+              <th>Status</th>
+              <th>Data Cadastro</th>
+              <th class="text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let usuario of listaFiltrada">
+              <td>{{ usuario.id }}</td>
+              <td>{{ usuario.nome }}</td>
+              <td>{{ usuario.email }}</td>
+              <td>
+                <span [class]="usuario.tipoUsuario === 'DEMANDANTE' ? 'badge bg-primary' : 'badge bg-info'">
+                  {{ tipoUsuarioLabels[usuario.tipoUsuario] }}
+                </span>
+              </td>
+              <td>
+                <span [class]="getStatusClass(usuario.ativo)">
+                  {{ getStatusLabel(usuario.ativo) }}
+                </span>
+              </td>
+              <td>{{ usuario.dataCriacao | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td class="text-center">
+                <button
+                  class="btn btn-sm btn-primary me-1"
+                  (click)="editar(usuario)"
+                  title="Editar"
+                >
+                  <i class="fas fa-pencil"></i>
+                </button>
+
+                <button
+                  class="btn btn-sm me-1"
+                  [class.btn-warning]="usuario.ativo"
+                  [class.btn-success]="!usuario.ativo"
+                  (click)="toggleAtivo(usuario)"
+                  [title]="usuario.ativo ? 'Desativar' : 'Reativar'"
+                >
+                  <i [class]="usuario.ativo ? 'fas fa-ban' : 'fas fa-check'"></i>
+                </button>
+
+                <button
+                  class="btn btn-sm btn-danger"
+                  (click)="excluir(usuario)"
+                  title="Excluir"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="listaFiltrada.length === 0">
+              <td colspan="7" class="text-center text-muted">
+                <i class="fas fa-info-circle"></i>
+                Nenhum usuário encontrado
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
