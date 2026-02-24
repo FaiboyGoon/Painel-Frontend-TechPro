@@ -1,126 +1,332 @@
-<div class="container my-4">
-  <h2 class="text-center mb-4">Extrato Financeiro</h2>
-
-  <!-- Filtros -->
-  <div class="row mb-3">
-    <div class="col-md-3">
-      <mdb-form-control class="mb-4">
-        <input
-          mdbInput
-          type="number"
-          id="form1Example1"
-          class="form-control"
-          [(ngModel)]="ano"
-          placeholder="Ano"
-          name="ano"
-        />
-        <label mdbLabel class="form-label" for="form1Example1">Ano</label>
-      </mdb-form-control>
-    </div>
-    <div class="col-md-3">
-      <mdb-form-control class="mb-4">
-        <input
-          mdbInput
-          type="number"
-          id="form1Example2"
-          class="form-control"
-          [(ngModel)]="mes"
-          placeholder="mes"
-          name="mes"
-        />
-        <label mdbLabel class="form-label" for="form1Example2">Mês</label>
-      </mdb-form-control>
-    </div>
-    <div class="col-md-3 align-items-end">
-      <button
-        type="button"
-        class="btn btn-primary"
-        mdbRipple
-        (click)="carregarExtratosMes()"
-      >
-        Buscar
-      </button>
-    </div>
-  </div>
-
-  <!-- Cards de Resumo - Agora com Reais e Dólares -->
-  <div *ngIf="resumoMensal" class="row mb-4">
-    <div class="col-md-4">
-      <div class="card bg-success text-white">
-        <div class="card-body">
-          <h5>Total Créditos</h5>
-          <p class="mb-1">{{ resumoMensal.totalCreditos | currency : "BRL" }}</p>
-          <small>{{ (resumoMensal.totalCreditos / taxaCambioAtual) | currency : "USD" }}</small>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card bg-danger text-white">
-        <div class="card-body">
-          <h5>Total Débitos</h5>
-          <p class="mb-1">{{ resumoMensal.totalDebitos | currency : "BRL" }}</p>
-          <small>{{ (resumoMensal.totalDebitos / taxaCambioAtual) | currency : "USD" }}</small>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card bg-primary text-white">
-        <div class="card-body">
-          <h5>Saldo Mês</h5>
-          <p class="mb-1">{{ resumoMensal.saldoMes | currency : "BRL" }}</p>
-          <small>{{ (resumoMensal.saldoMes / taxaCambioAtual) | currency : "USD" }}</small>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
+<div class="container-page">
+  <div class="card panel-card">
     <div class="card-body">
-      <h5 class="card-title">Extratos do Mês</h5>
+      
+      <!-- Título e Filtros -->
+      <div class="header-section">
+        <h3 class="title-page">Extrato Financeiro</h3>
+        
+        <!-- Abas de Visualização -->
+        <div class="view-tabs">
+          <button 
+            class="tab-btn" 
+            [class.active]="visualizacao === 'mensal'"
+            (click)="mudarVisualizacao('mensal')"
+          >
+            <i class="fas fa-calendar-alt"></i> Mensal
+          </button>
+          <button 
+            class="tab-btn" 
+            [class.active]="visualizacao === 'anual'"
+            (click)="mudarVisualizacao('anual')"
+          >
+            <i class="fas fa-calendar"></i> Anual
+          </button>
+        </div>
 
-      <div class="table-responsive">
-        <table
-          *ngIf="extratos.length > 0"
-          class="table table-hover table-striped mt-3"
-        >
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Total Créditos</th>
-              <th>Total Débitos</th>
-              <th>Saldo Dia</th>
-              <th>Saldo Acumulado</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (extrato of extratos; track $index) {
-            <tr>
-              <td>{{ extrato.data }}</td>
-              <td>
-                <div>{{ extrato.totalCreditosDolares * taxaCambioAtual | currency : "BRL" }}</div>
-                <small class="text-muted">{{ extrato.totalCreditosDolares | currency : "USD" }}</small>
-              </td>
-              <td>
-                <div>{{ extrato.totalDebitosDolares * taxaCambioAtual | currency : "BRL" }}</div>
-                <small class="text-muted">{{ extrato.totalDebitosDolares | currency : "USD" }}</small>
-              </td>
-              <td>
-                <div>{{ extrato.saldoDiaDolares * taxaCambioAtual | currency : "BRL" }}</div>
-                <small class="text-muted">{{ extrato.saldoDiaDolares | currency : "USD" }}</small>
-              </td>
-              <td>
-                <div>{{ extrato.saldoAcumuladoDolares * taxaCambioAtual | currency : "BRL" }}</div>
-                <small class="text-muted">{{ extrato.saldoAcumuladoDolares | currency : "USD" }}</small>
-              </td>
-            </tr>
-            }
-          </tbody>
-        </table>
+        <!-- Filtros Mensais -->
+        <div class="filters-container" *ngIf="visualizacao === 'mensal'">
+          <div class="filter-group">
+            <label class="filter-label">Ano</label>
+            <input
+              type="number"
+              class="form-control filter-input"
+              [(ngModel)]="ano"
+              placeholder="2026"
+              name="ano"
+              min="2000"
+              max="2100"
+            />
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label">Mês</label>
+            <input
+              type="number"
+              class="form-control filter-input"
+              [(ngModel)]="mes"
+              placeholder="1-12"
+              name="mes"
+              min="1"
+              max="12"
+            />
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-primary btn-buscar"
+            (click)="carregarExtratosMes(); carregarResumoMensal()"
+          >
+            <i class="fas fa-search"></i> Buscar
+          </button>
+        </div>
+
+        <!-- Filtros Anuais -->
+        <div class="filters-container" *ngIf="visualizacao === 'anual'">
+          <div class="filter-group">
+            <label class="filter-label">Ano</label>
+            <input
+              type="number"
+              class="form-control filter-input"
+              [(ngModel)]="ano"
+              placeholder="2026"
+              name="anoAnual"
+              min="2000"
+              max="2100"
+            />
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-primary btn-buscar"
+            (click)="carregarExtratosAno(); carregarResumoAnual()"
+          >
+            <i class="fas fa-search"></i> Buscar
+          </button>
+        </div>
       </div>
 
-      <div *ngIf="extratos.length === 0" class="text-center">
-        Nenhum extrato encontrado.
+      <div *ngIf="visualizacao === 'mensal'">
+        <div *ngIf="resumoMensal" class="resumo-cards">
+          <div class="card-resumo card-creditos">
+            <div class="card-resumo-icon">
+              <i class="fas fa-arrow-up"></i>
+            </div>
+            <div class="card-resumo-content">
+              <span class="card-resumo-label">Total Créditos</span>
+              <h4 class="card-resumo-valor">
+                {{ resumoMensal.totalCreditos | currency : 'USD' : 'symbol' : '1.2-2' }}
+              </h4>
+              <small class="card-resumo-secondary">
+                {{ (resumoMensal.totalCreditos * taxaCambioAtual) | currency : 'BRL' : 'symbol' : '1.2-2' }}
+              </small>
+            </div>
+          </div>
+
+          <!-- Card Débitos -->
+          <div class="card-resumo card-debitos">
+            <div class="card-resumo-icon">
+              <i class="fas fa-arrow-down"></i>
+            </div>
+            <div class="card-resumo-content">
+              <span class="card-resumo-label">Total Débitos</span>
+              <h4 class="card-resumo-valor">
+                {{ resumoMensal.totalDebitos | currency : 'USD' : 'symbol' : '1.2-2' }}
+              </h4>
+              <small class="card-resumo-secondary">
+                {{ (resumoMensal.totalDebitos * taxaCambioAtual) | currency : 'BRL' : 'symbol' : '1.2-2' }}
+              </small>
+            </div>
+          </div>
+
+          <!-- Card Saldo -->
+          <div class="card-resumo" [ngClass]="resumoMensal.saldoMes >= 0 ? 'card-saldo-positivo' : 'card-saldo-negativo'">
+            <div class="card-resumo-icon">
+              <i class="fas" [ngClass]="resumoMensal.saldoMes >= 0 ? 'fa-check-circle' : 'fa-exclamation-circle'"></i>
+            </div>
+            <div class="card-resumo-content">
+              <span class="card-resumo-label">Saldo do Mês</span>
+              <h4 class="card-resumo-valor">
+                {{ resumoMensal.saldoMes | currency : 'USD' : 'symbol' : '1.2-2' }}
+              </h4>
+              <small class="card-resumo-secondary">
+                {{ (resumoMensal.saldoMes * taxaCambioAtual) | currency : 'BRL' : 'symbol' : '1.2-2' }}
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabela Mensal -->
+        <div class="extratos-section">
+          <h5 class="section-title">
+            <i class="fas fa-calendar-alt"></i>
+            Extratos Diários - {{ getMesNome(mes) }}/{{ ano }}
+          </h5>
+
+          <div class="table-responsive" *ngIf="extratos.length > 0">
+            <table class="table table-extratos">
+              <thead>
+                <tr>
+                  <th><i class="fas fa-calendar"></i> Data</th>
+                  <th class="text-end"><i class="fas fa-plus-circle text-success"></i> Créditos</th>
+                  <th class="text-end"><i class="fas fa-minus-circle text-danger"></i> Débitos</th>
+                  <th class="text-end"><i class="fas fa-balance-scale"></i> Saldo Dia</th>
+                  <th class="text-end"><i class="fas fa-chart-line"></i> Saldo Acumulado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let extrato of extratos" [class.saldo-negativo]="extrato.saldoDiaDolares < 0">
+                  <td class="data-cell">
+                    {{ extrato.data | date : 'dd/MM/yyyy' }}
+                    <span class="dia-semana">{{ getDiaSemana(extrato.data) }}</span>
+                  </td>
+                  
+                  <td class="text-end valor-cell credito-cell">
+                    <div class="valor-principal">
+                      {{ extrato.totalCreditosDolares | currency : 'USD' : 'symbol' : '1.2-2' }}
+                    </div>
+                    <div class="valor-secondary">
+                      {{ (extrato.totalCreditosDolares * taxaCambioAtual) | currency : 'BRL' : 'symbol' : '1.2-2' }}
+                    </div>
+                  </td>
+
+                  <td class="text-end valor-cell debito-cell">
+                    <div class="valor-principal">
+                      {{ extrato.totalDebitosDolares | currency : 'USD' : 'symbol' : '1.2-2' }}
+                    </div>
+                    <div class="valor-secondary">
+                      {{ (extrato.totalDebitosDolares * taxaCambioAtual) | currency : 'BRL' : 'symbol' : '1.2-2' }}
+                    </div>
+                  </td>
+
+                  <td class="text-end valor-cell saldo-dia-cell">
+                    <div class="valor-principal" [class.positivo]="extrato.saldoDiaDolares >= 0" [class.negativo]="extrato.saldoDiaDolares < 0">
+                      <i class="fas" [class.fa-arrow-up]="extrato.saldoDiaDolares >= 0" [class.fa-arrow-down]="extrato.saldoDiaDolares < 0"></i>
+                      {{ extrato.saldoDiaDolares | currency : 'USD' : 'symbol' : '1.2-2' }}
+                    </div>
+                    <div class="valor-secondary">
+                      {{ (extrato.saldoDiaDolares * taxaCambioAtual) | currency : 'BRL' : 'symbol' : '1.2-2' }}
+                    </div>
+                  </td>
+
+                  <td class="text-end valor-cell saldo-acumulado-cell">
+                    <div class="valor-principal destaque" [class.positivo]="extrato.saldoAcumuladoDolares >= 0" [class.negativo]="extrato.saldoAcumuladoDolares < 0">
+                      {{ extrato.saldoAcumuladoDolares | currency : 'USD' : 'symbol' : '1.2-2' }}
+                    </div>
+                    <div class="valor-secondary">
+                      {{ (extrato.saldoAcumuladoDolares * taxaCambioAtual) | currency : 'BRL' : 'symbol' : '1.2-2' }}
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div *ngIf="extratos.length === 0" class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h5>Nenhum extrato encontrado</h5>
+            <p>Não há registros para o período selecionado ({{ getMesNome(mes) }}/{{ ano }})</p>
+          </div>
+        </div>
       </div>
+
+      <div *ngIf="visualizacao === 'anual'">
+        <div *ngIf="resumoAnual" class="resumo-cards">
+          <div class="card-resumo card-creditos">
+            <div class="card-resumo-icon">
+              <i class="fas fa-arrow-up"></i>
+            </div>
+            <div class="card-resumo-content">
+              <span class="card-resumo-label">Total Créditos do Ano</span>
+              <h4 class="card-resumo-valor">
+                {{ resumoAnual.totalCreditos | currency : 'USD' : 'symbol' : '1.2-2' }}
+              </h4>
+              <small class="card-resumo-secondary">
+                {{ (resumoAnual.totalCreditos * taxaCambioAtual) | currency : 'BRL' : 'symbol' : '1.2-2' }}
+              </small>
+            </div>
+          </div>
+
+          <!-- Card Débitos -->
+          <div class="card-resumo card-debitos">
+            <div class="card-resumo-icon">
+              <i class="fas fa-arrow-down"></i>
+            </div>
+            <div class="card-resumo-content">
+              <span class="card-resumo-label">Total Débitos do Ano</span>
+              <h4 class="card-resumo-valor">
+                {{ resumoAnual.totalDebitos | currency : 'USD' : 'symbol' : '1.2-2' }}
+              </h4>
+              <small class="card-resumo-secondary">
+                {{ (resumoAnual.totalDebitos * taxaCambioAtual) | currency : 'BRL' : 'symbol' : '1.2-2' }}
+              </small>
+            </div>
+          </div>
+
+          <div class="card-resumo" [ngClass]="resumoAnual.saldoAno >= 0 ? 'card-saldo-positivo' : 'card-saldo-negativo'">
+            <div class="card-resumo-icon">
+              <i class="fas" [ngClass]="resumoAnual.saldoAno >= 0 ? 'fa-check-circle' : 'fa-exclamation-circle'"></i>
+            </div>
+            <div class="card-resumo-content">
+              <span class="card-resumo-label">Saldo do Ano</span>
+              <h4 class="card-resumo-valor">
+                {{ resumoAnual.saldoAno | currency : 'USD' : 'symbol' : '1.2-2' }}
+              </h4>
+              <small class="card-resumo-secondary">
+                {{ (resumoAnual.saldoAno * taxaCambioAtual) | currency : 'BRL' : 'symbol' : '1.2-2' }}
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <div class="extratos-section">
+          <h5 class="section-title">
+            <i class="fas fa-calendar"></i>
+            Extratos Mensais - Ano {{ ano }}
+          </h5>
+
+          <div class="table-responsive" *ngIf="extratosAgrupados.length > 0">
+            <table class="table table-extratos">
+              <thead>
+                <tr>
+                  <th><i class="fas fa-calendar-alt"></i> Mês</th>
+                  <th class="text-end"><i class="fas fa-plus-circle text-success"></i> Créditos</th>
+                  <th class="text-end"><i class="fas fa-minus-circle text-danger"></i> Débitos</th>
+                  <th class="text-end"><i class="fas fa-balance-scale"></i> Saldo do Mês</th>
+                  <th class="text-center"><i class="fas fa-info-circle"></i> Dias c/ Movimento</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let grupo of extratosAgrupados" [class.saldo-negativo]="grupo.saldoMes < 0">
+                  <td class="data-cell">
+                    <strong>{{ getMesNome(grupo.mes) }}</strong>
+                    <span class="dia-semana">{{ grupo.mes }}/{{ ano }}</span>
+                  </td>
+                  
+                  <td class="text-end valor-cell credito-cell">
+                    <div class="valor-principal">
+                      {{ grupo.totalCreditos | currency : 'USD' : 'symbol' : '1.2-2' }}
+                    </div>
+                    <div class="valor-secondary">
+                      {{ (grupo.totalCreditos * taxaCambioAtual) | currency : 'BRL' : 'symbol' : '1.2-2' }}
+                    </div>
+                  </td>
+
+                  <td class="text-end valor-cell debito-cell">
+                    <div class="valor-principal">
+                      {{ grupo.totalDebitos | currency : 'USD' : 'symbol' : '1.2-2' }}
+                    </div>
+                    <div class="valor-secondary">
+                      {{ (grupo.totalDebitos * taxaCambioAtual) | currency : 'BRL' : 'symbol' : '1.2-2' }}
+                    </div>
+                  </td>
+
+                  <td class="text-end valor-cell saldo-dia-cell">
+                    <div class="valor-principal destaque" [class.positivo]="grupo.saldoMes >= 0" [class.negativo]="grupo.saldoMes < 0">
+                      <i class="fas" [class.fa-arrow-up]="grupo.saldoMes >= 0" [class.fa-arrow-down]="grupo.saldoMes < 0"></i>
+                      {{ grupo.saldoMes | currency : 'USD' : 'symbol' : '1.2-2' }}
+                    </div>
+                    <div class="valor-secondary">
+                      {{ (grupo.saldoMes * taxaCambioAtual) | currency : 'BRL' : 'symbol' : '1.2-2' }}
+                    </div>
+                  </td>
+
+                  <td class="text-center">
+                    <span class="badge bg-info">{{ grupo.diasComMovimento }} dias</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div *ngIf="extratosAgrupados.length === 0" class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h5>Nenhum extrato encontrado</h5>
+            <p>Não há registros para o ano de {{ ano }}</p>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
