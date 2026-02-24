@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { MdbCollapseModule } from 'mdb-angular-ui-kit/collapse';
 import { AuthService } from '../../../auth/auth.service';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -12,12 +13,55 @@ import { CommonModule } from '@angular/common';
 })
 export class NavbarComponent {
   authService = inject(AuthService);
+  router = inject(Router);
+  
+  dropdownAberto = false;
 
   isDemandante(): boolean {
     const user = this.authService.getUsuarioLogado();
-    console.log('Usuário logado:', user);
-    console.log('Tipo de usuário:', user?.tipoUsuario);
-    console.log('É DEMANDANTE?', this.authService.hasRole('DEMANDANTE'));
     return this.authService.hasRole('DEMANDANTE');
+  }
+
+  getUsuario() {
+    return this.authService.getUsuarioLogado();
+  }
+
+  getNomeUsuario(): string {
+    const usuario = this.getUsuario();
+    return usuario?.nome || 'Usuário';
+  }
+
+  getEmailUsuario(): string {
+    const usuario = this.getUsuario();
+    return usuario?.email || '';
+  }
+
+  getTipoUsuario(): string {
+    const usuario = this.getUsuario();
+    return usuario?.tipoUsuario === 'DEMANDANTE' ? 'Demandante' : 'Usuário';
+  }
+
+  getIniciais(): string {
+    const usuario = this.getUsuario();
+    if (!usuario || !usuario.nome) return 'U';
+    
+    const nomes = usuario.nome.trim().split(' ');
+    if (nomes.length === 1) {
+      return nomes[0].charAt(0).toUpperCase();
+    }
+    return (nomes[0].charAt(0) + nomes[nomes.length - 1].charAt(0)).toUpperCase();
+  }
+
+  toggleDropdown() {
+    this.dropdownAberto = !this.dropdownAberto;
+  }
+
+  fecharDropdown() {
+    this.dropdownAberto = false;
+  }
+
+  sair() {
+    this.authService.removerToken();
+    this.router.navigate(['/login']);
   }
 }
